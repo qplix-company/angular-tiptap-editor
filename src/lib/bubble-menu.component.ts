@@ -111,7 +111,11 @@ export class TiptapBubbleMenuComponent implements OnInit, OnDestroy {
     const editor = this.editor();
     const range = this.selectionRange();
     return (
-      editor && range && range.from !== range.to && !editor.isActive("image")
+      editor &&
+      range &&
+      range.from !== range.to &&
+      !editor.isActive("image") &&
+      !editor.isActive("resizableImage")
     );
   });
 

@@ -20,9 +20,9 @@ import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
 import CharacterCount from "@tiptap/extension-character-count";
 import BubbleMenu from "@tiptap/extension-bubble-menu";
-import Image from "@tiptap/extension-image";
 import OfficePaste from "@intevation/tiptap-extension-office-paste";
 import { SlashCommands } from "./slash-commands.extension";
+import { ResizableImage } from "./extensions/resizable-image.extension";
 import { TiptapBubbleMenuComponent } from "./bubble-menu.component";
 import { TiptapToolbarComponent } from "./toolbar.component";
 import {
@@ -543,7 +543,7 @@ export class TiptapEditorComponent
       Placeholder.configure({
         placeholder: this.placeholder(),
       }),
-      Image.configure({
+      ResizableImage.configure({
         inline: false,
         allowBase64: true,
         HTMLAttributes: {
@@ -592,7 +592,11 @@ export class TiptapEditorComponent
         element: this.createImageMenuElement(),
         shouldShow: ({ editor }) => {
           // Afficher le menu image seulement quand une image est sélectionnée ET que l'éditeur est éditable
-          return editor.isActive("image") && this.editable();
+          return editor.isActive("resizableImage") && this.editable();
+        },
+        tippyOptions: {
+          placement: "top-start", // Positionner en haut à gauche
+          offset: [0, 8], // Décalage vers le haut
         },
       })
     );
@@ -650,56 +654,44 @@ export class TiptapEditorComponent
     );
     imageMenuEl.appendChild(changeBtn);
 
-    // Bouton pour modifier l'URL
-    const urlBtn = this.createImageMenuButton("link", "Modifier l'URL", () =>
-      this.editImageUrl()
-    );
-    imageMenuEl.appendChild(urlBtn);
-
     // Séparateur
     const separator1 = document.createElement("div");
     separator1.className = "tiptap-separator";
     imageMenuEl.appendChild(separator1);
 
-    // Boutons d'alignement
-    const alignLeftBtn = this.createImageMenuButton(
-      "format_align_left",
-      "Aligner à gauche",
-      () => this.alignImage("left")
+    // Boutons de redimensionnement
+    const resizeSmallBtn = this.createImageMenuButton(
+      "crop_square",
+      "Petite (300×200)",
+      () => this.resizeImageToSmall()
     );
-    imageMenuEl.appendChild(alignLeftBtn);
+    imageMenuEl.appendChild(resizeSmallBtn);
 
-    const alignCenterBtn = this.createImageMenuButton(
-      "format_align_center",
-      "Centrer",
-      () => this.alignImage("center")
+    const resizeMediumBtn = this.createImageMenuButton(
+      "crop_landscape",
+      "Moyenne (500×350)",
+      () => this.resizeImageToMedium()
     );
-    imageMenuEl.appendChild(alignCenterBtn);
+    imageMenuEl.appendChild(resizeMediumBtn);
 
-    const alignRightBtn = this.createImageMenuButton(
-      "format_align_right",
-      "Aligner à droite",
-      () => this.alignImage("right")
+    const resizeLargeBtn = this.createImageMenuButton(
+      "crop_free",
+      "Grande (800×600)",
+      () => this.resizeImageToLarge()
     );
-    imageMenuEl.appendChild(alignRightBtn);
+    imageMenuEl.appendChild(resizeLargeBtn);
+
+    const resizeOriginalBtn = this.createImageMenuButton(
+      "restore",
+      "Taille originale",
+      () => this.resizeImageToOriginal()
+    );
+    imageMenuEl.appendChild(resizeOriginalBtn);
 
     // Séparateur
     const separator2 = document.createElement("div");
     separator2.className = "tiptap-separator";
     imageMenuEl.appendChild(separator2);
-
-    // Bouton pour éditer les attributs
-    const attributesBtn = this.createImageMenuButton(
-      "settings",
-      "Propriétés",
-      () => this.editImageAttributes()
-    );
-    imageMenuEl.appendChild(attributesBtn);
-
-    // Séparateur
-    const separator3 = document.createElement("div");
-    separator3.className = "tiptap-separator";
-    imageMenuEl.appendChild(separator3);
 
     // Bouton pour supprimer l'image
     const deleteBtn = this.createImageMenuButton(
@@ -811,21 +803,6 @@ export class TiptapEditorComponent
     document.body.removeChild(input);
   }
 
-  private editImageUrl() {
-    const currentEditor = this.editor();
-    if (!currentEditor) return;
-
-    // Récupérer l'URL actuelle de l'image
-    const attrs = currentEditor.getAttributes("image");
-    const newUrl = window.prompt("URL de l'image:", attrs["src"] || "");
-
-    if (newUrl !== null && newUrl.trim() !== "") {
-      this.imageService.updateImageAttributes(currentEditor, {
-        src: newUrl.trim(),
-      });
-    }
-  }
-
   private deleteImage() {
     const currentEditor = this.editor();
     if (!currentEditor) return;
@@ -835,33 +812,33 @@ export class TiptapEditorComponent
     }
   }
 
-  // Méthodes pour l'alignement des images
-  private alignImage(alignment: "left" | "center" | "right") {
+  // Méthodes pour le redimensionnement des images
+  private resizeImageToSmall() {
     const currentEditor = this.editor();
     if (!currentEditor) return;
 
-    this.imageService.alignImage(currentEditor, alignment);
+    this.imageService.resizeImageToSmall(currentEditor);
   }
 
-  // Méthode pour éditer les attributs de l'image
-  private editImageAttributes() {
+  private resizeImageToMedium() {
     const currentEditor = this.editor();
     if (!currentEditor) return;
 
-    if (currentEditor.isActive("image")) {
-      const attrs = currentEditor.getAttributes("image");
+    this.imageService.resizeImageToMedium(currentEditor);
+  }
 
-      // Créer un formulaire simple pour éditer les attributs
-      const alt = window.prompt("Texte alternatif (alt):", attrs["alt"] || "");
-      const title = window.prompt("Titre (title):", attrs["title"] || "");
+  private resizeImageToLarge() {
+    const currentEditor = this.editor();
+    if (!currentEditor) return;
 
-      if (alt !== null && title !== null) {
-        this.imageService.updateImageAttributes(currentEditor, {
-          alt: alt,
-          title: title,
-        });
-      }
-    }
+    this.imageService.resizeImageToLarge(currentEditor);
+  }
+
+  private resizeImageToOriginal() {
+    const currentEditor = this.editor();
+    if (!currentEditor) return;
+
+    this.imageService.resizeImageToOriginal(currentEditor);
   }
 
   // Méthodes pour l'upload d'images

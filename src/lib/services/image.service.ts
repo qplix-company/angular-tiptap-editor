@@ -7,7 +7,6 @@ export interface ImageData {
   title?: string;
   width?: number;
   height?: number;
-  align?: "left" | "center" | "right";
 }
 
 export interface ImageUploadResult {
@@ -20,6 +19,12 @@ export interface ImageUploadResult {
   originalSize?: number;
 }
 
+export interface ResizeOptions {
+  width?: number;
+  height?: number;
+  maintainAspectRatio?: boolean;
+}
+
 @Injectable({
   providedIn: "root",
 })
@@ -27,21 +32,19 @@ export class ImageService {
   // Signals pour l'état des images
   selectedImage = signal<ImageData | null>(null);
   isImageSelected = computed(() => this.selectedImage() !== null);
-  currentAlignment = signal<"left" | "center" | "right">("center");
+  isResizing = signal(false);
 
   // Méthodes pour la gestion des images
   selectImage(editor: Editor): void {
-    if (editor.isActive("image")) {
-      const attrs = editor.getAttributes("image");
+    if (editor.isActive("resizableImage")) {
+      const attrs = editor.getAttributes("resizableImage");
       this.selectedImage.set({
         src: attrs["src"],
         alt: attrs["alt"],
         title: attrs["title"],
         width: attrs["width"],
         height: attrs["height"],
-        align: attrs["align"] || "center",
       });
-      this.currentAlignment.set(attrs["align"] || "center");
     } else {
       this.selectedImage.set(null);
     }
@@ -53,48 +56,142 @@ export class ImageService {
 
   // Méthodes pour manipuler les images
   insertImage(editor: Editor, imageData: ImageData): void {
-    editor.chain().focus().setImage(imageData).run();
+    editor.chain().focus().setResizableImage(imageData).run();
   }
 
   updateImageAttributes(editor: Editor, attributes: Partial<ImageData>): void {
-    if (editor.isActive("image")) {
-      editor.chain().focus().updateAttributes("image", attributes).run();
+    if (editor.isActive("resizableImage")) {
+      editor
+        .chain()
+        .focus()
+        .updateAttributes("resizableImage", attributes)
+        .run();
       this.updateSelectedImage(attributes);
     }
   }
 
-  alignImage(editor: Editor, alignment: "left" | "center" | "right"): void {
-    if (editor.isActive("image")) {
-      // Appliquer l'alignement via CSS en modifiant le conteneur parent
-      const selection = editor.state.selection;
-      const node = editor.state.doc.nodeAt(selection.from);
+  // Nouvelles méthodes pour le redimensionnement
+  resizeImage(editor: Editor, options: ResizeOptions): void {
+    if (!editor.isActive("resizableImage")) return;
 
-      if (node && node.type.name === "image") {
-        // Trouver l'élément DOM de l'image
-        const domNode = editor.view.nodeDOM(selection.from) as HTMLElement;
-        if (domNode) {
-          // Créer ou mettre à jour le conteneur avec la classe d'alignement
-          let container = domNode.parentElement;
-          if (!container || !container.classList.contains("image-container")) {
-            // Créer un nouveau conteneur
-            container = document.createElement("div");
-            container.className = `image-container image-align-${alignment}`;
-            domNode.parentNode?.insertBefore(container, domNode);
-            container.appendChild(domNode);
-          } else {
-            // Mettre à jour la classe d'alignement
-            container.className = `image-container image-align-${alignment}`;
-          }
-        }
+    const currentAttrs = editor.getAttributes("resizableImage");
+    let newWidth = options.width;
+    let newHeight = options.height;
+
+    // Maintenir le ratio d'aspect si demandé
+    if (
+      options.maintainAspectRatio !== false &&
+      currentAttrs["width"] &&
+      currentAttrs["height"]
+    ) {
+      const aspectRatio = currentAttrs["width"] / currentAttrs["height"];
+
+      if (newWidth && !newHeight) {
+        newHeight = Math.round(newWidth / aspectRatio);
+      } else if (newHeight && !newWidth) {
+        newWidth = Math.round(newHeight * aspectRatio);
       }
-
-      this.currentAlignment.set(alignment);
-      this.updateSelectedImage({ align: alignment });
     }
+
+    // Appliquer des limites minimales
+    if (newWidth) newWidth = Math.max(50, newWidth);
+    if (newHeight) newHeight = Math.max(50, newHeight);
+
+    this.updateImageAttributes(editor, {
+      width: newWidth,
+      height: newHeight,
+    });
+  }
+
+  // Méthodes pour redimensionner par pourcentage
+  resizeImageByPercentage(editor: Editor, percentage: number): void {
+    if (!editor.isActive("resizableImage")) return;
+
+    const currentAttrs = editor.getAttributes("resizableImage");
+    if (!currentAttrs["width"] || !currentAttrs["height"]) return;
+
+    const newWidth = Math.round(currentAttrs["width"] * (percentage / 100));
+    const newHeight = Math.round(currentAttrs["height"] * (percentage / 100));
+
+    this.resizeImage(editor, { width: newWidth, height: newHeight });
+  }
+
+  // Méthodes pour redimensionner à des tailles prédéfinies
+  resizeImageToSmall(editor: Editor): void {
+    this.resizeImage(editor, {
+      width: 300,
+      height: 200,
+      maintainAspectRatio: true,
+    });
+  }
+
+  resizeImageToMedium(editor: Editor): void {
+    this.resizeImage(editor, {
+      width: 500,
+      height: 350,
+      maintainAspectRatio: true,
+    });
+  }
+
+  resizeImageToLarge(editor: Editor): void {
+    this.resizeImage(editor, {
+      width: 800,
+      height: 600,
+      maintainAspectRatio: true,
+    });
+  }
+
+  resizeImageToOriginal(editor: Editor): void {
+    if (!editor.isActive("resizableImage")) return;
+
+    const img = new Image();
+    img.onload = () => {
+      this.resizeImage(editor, {
+        width: img.naturalWidth,
+        height: img.naturalHeight,
+      });
+    };
+    img.src = editor.getAttributes("resizableImage")["src"];
+  }
+
+  // Méthode pour redimensionner librement (sans maintenir le ratio)
+  resizeImageFreely(editor: Editor, width: number, height: number): void {
+    this.resizeImage(editor, {
+      width,
+      height,
+      maintainAspectRatio: false,
+    });
+  }
+
+  // Méthode pour obtenir les dimensions actuelles de l'image
+  getImageDimensions(editor: Editor): { width: number; height: number } | null {
+    if (!editor.isActive("resizableImage")) return null;
+
+    const attrs = editor.getAttributes("resizableImage");
+    return {
+      width: attrs["width"] || 0,
+      height: attrs["height"] || 0,
+    };
+  }
+
+  // Méthode pour obtenir les dimensions naturelles de l'image
+  getNaturalImageDimensions(
+    src: string
+  ): Promise<{ width: number; height: number }> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        resolve({ width: img.naturalWidth, height: img.naturalHeight });
+      };
+      img.onerror = () => {
+        reject(new Error("Impossible de charger l'image"));
+      };
+      img.src = src;
+    });
   }
 
   deleteImage(editor: Editor): void {
-    if (editor.isActive("image")) {
+    if (editor.isActive("resizableImage")) {
       editor.chain().focus().deleteSelection().run();
       this.clearSelection();
     }

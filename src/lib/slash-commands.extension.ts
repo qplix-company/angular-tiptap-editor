@@ -99,10 +99,12 @@ export const DEFAULT_SLASH_COMMANDS: SlashCommandItem[] = [
                 editor
                   .chain()
                   .focus()
-                  .setImage({
+                  .setResizableImage({
                     src: result.src,
                     alt: result.name,
                     title: `${result.name} (${result.width}×${result.height})`,
+                    width: result.width,
+                    height: result.height,
                   })
                   .run();
               })
@@ -146,12 +148,14 @@ export const DEFAULT_SLASH_COMMANDS: SlashCommandItem[] = [
                         editor
                           .chain()
                           .focus()
-                          .setImage({
+                          .setResizableImage({
                             src: base64,
                             alt: file.name,
                             title: `${file.name} (${Math.round(
                               width
                             )}×${Math.round(height)})`,
+                            width: Math.round(width),
+                            height: Math.round(height),
                           })
                           .run();
                       }

@@ -225,7 +225,17 @@ export class TiptapToolbarComponent {
   // Méthodes pour la gestion des images
   onImageSelected(result: ImageUploadResult) {
     // Insérer l'image dans l'éditeur
-    this.editor().chain().focus().setImage({ src: result.src }).run();
+    this.editor()
+      .chain()
+      .focus()
+      .setResizableImage({
+        src: result.src,
+        alt: result.name,
+        title: `${result.name} (${result.width}×${result.height})`,
+        width: result.width,
+        height: result.height,
+      })
+      .run();
     this.imageUploaded.emit(result);
   }
 
