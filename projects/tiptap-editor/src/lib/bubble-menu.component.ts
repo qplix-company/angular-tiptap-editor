@@ -28,7 +28,7 @@ export interface BubbleMenuConfig {
   template: `
     @if (isVisible()) {
     <div
-      class="bubble-menu"
+      class="tiptap-bubble-menu"
       [style.left.px]="position().x"
       [style.top.px]="position().y"
     >
@@ -70,6 +70,7 @@ export interface BubbleMenuConfig {
     `
       /* Styles pour le menu contextuel (bubble menu) */
       .tiptap-bubble-menu {
+        position: fixed;
         display: flex;
         align-items: center;
         gap: 6px;
@@ -81,6 +82,7 @@ export interface BubbleMenuConfig {
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
         z-index: 1000;
         animation: slideUp 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        pointer-events: auto;
       }
 
       @keyframes slideUp {
@@ -94,244 +96,11 @@ export interface BubbleMenuConfig {
         }
       }
 
-      /* Styles pour les boutons avec :host ::ng-deep */
-      :host ::ng-deep .tiptap-button {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 36px;
-        height: 36px;
-        border: none;
-        background: transparent;
-        border-radius: 10px;
-        cursor: pointer;
-        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        color: #64748b;
-        position: relative;
-        overflow: hidden;
-      }
-
-      :host ::ng-deep .tiptap-button::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(135deg, #6366f1, #8b5cf6);
-        opacity: 0;
-        transition: opacity 0.2s ease;
-        border-radius: 10px;
-      }
-
-      :host ::ng-deep .tiptap-button:hover {
-        color: #6366f1;
-        transform: translateY(-1px);
-      }
-
-      :host ::ng-deep .tiptap-button:hover::before {
-        opacity: 0.1;
-      }
-
-      :host ::ng-deep .tiptap-button:active {
-        transform: translateY(0);
-      }
-
-      :host ::ng-deep .tiptap-button.is-active {
-        color: #6366f1;
-        background: rgba(99, 102, 241, 0.1);
-      }
-
-      :host ::ng-deep .tiptap-button.is-active::before {
-        opacity: 0.15;
-      }
-
-      :host ::ng-deep .tiptap-button.is-active:hover {
-        background: rgba(99, 102, 241, 0.15);
-      }
-
-      :host ::ng-deep .tiptap-button:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-        pointer-events: none;
-      }
-
-      :host ::ng-deep .tiptap-button:disabled:hover {
-        transform: none;
-        color: #64748b;
-      }
-
-      :host ::ng-deep .tiptap-button:disabled::before {
-        opacity: 0;
-      }
-
-      /* Icônes Material Symbols */
-      :host ::ng-deep .tiptap-button .material-symbols-outlined {
-        font-size: 20px;
-        position: relative;
-        z-index: 1;
-      }
-
-      /* Boutons avec texte */
-      :host ::ng-deep .tiptap-button.text-button {
-        width: auto;
-        padding: 0 12px;
-        font-size: 14px;
-        font-weight: 500;
-      }
-
-      /* Boutons de couleur */
-      :host ::ng-deep .tiptap-button.color-button {
-        width: 28px;
-        height: 28px;
-        border-radius: 50%;
-        border: 2px solid transparent;
-        transition: all 0.2s ease;
-      }
-
-      :host ::ng-deep .tiptap-button.color-button:hover {
-        border-color: #e2e8f0;
-        transform: scale(1.1);
-      }
-
-      :host ::ng-deep .tiptap-button.color-button.is-active {
-        border-color: #6366f1;
-        box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
-      }
-
-      /* Boutons avec variantes */
-      :host ::ng-deep .tiptap-button.primary {
-        background: linear-gradient(135deg, #6366f1, #8b5cf6);
-        color: white;
-      }
-
-      :host ::ng-deep .tiptap-button.primary:hover {
-        background: linear-gradient(135deg, #5b21b6, #7c3aed);
-        color: white;
-      }
-
-      :host ::ng-deep .tiptap-button.secondary {
-        background: #f1f5f9;
-        color: #64748b;
-      }
-
-      :host ::ng-deep .tiptap-button.secondary:hover {
-        background: #e2e8f0;
-        color: #475569;
-      }
-
-      :host ::ng-deep .tiptap-button.danger {
-        color: #ef4444;
-      }
-
-      :host ::ng-deep .tiptap-button.danger:hover {
-        color: #dc2626;
-        background: rgba(239, 68, 68, 0.1);
-      }
-
-      :host ::ng-deep .tiptap-button.danger::before {
-        background: linear-gradient(135deg, #ef4444, #dc2626);
-      }
-
-      /* Boutons de taille différente */
-      :host ::ng-deep .tiptap-button.small {
-        width: 28px;
-        height: 28px;
-      }
-
-      :host ::ng-deep .tiptap-button.small .material-symbols-outlined {
-        font-size: 16px;
-      }
-
-      :host ::ng-deep .tiptap-button.large {
-        width: 44px;
-        height: 44px;
-      }
-
-      :host ::ng-deep .tiptap-button.large .material-symbols-outlined {
-        font-size: 24px;
-      }
-
-      /* Boutons avec badge */
-      :host ::ng-deep .tiptap-button.has-badge {
-        position: relative;
-      }
-
-      :host ::ng-deep .tiptap-button .badge {
-        position: absolute;
-        top: -4px;
-        right: -4px;
-        background: #ef4444;
-        color: white;
-        font-size: 10px;
-        padding: 2px 4px;
-        border-radius: 8px;
-        min-width: 16px;
-        text-align: center;
-        line-height: 1;
-      }
-
-      /* Boutons avec tooltip */
-      :host ::ng-deep .tiptap-button.has-tooltip {
-        position: relative;
-      }
-
-      :host ::ng-deep .tiptap-button .tooltip {
-        position: absolute;
-        bottom: -30px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: rgba(0, 0, 0, 0.8);
-        color: white;
-        padding: 4px 8px;
-        border-radius: 4px;
-        font-size: 12px;
-        white-space: nowrap;
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.2s ease;
-        z-index: 1000;
-      }
-
-      :host ::ng-deep .tiptap-button:hover .tooltip {
-        opacity: 1;
-        visibility: visible;
-      }
-
-      /* Animation de pulsation pour les boutons actifs */
-      @keyframes pulse {
-        0%,
-        100% {
-          box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4);
-        }
-        50% {
-          box-shadow: 0 0 0 4px rgba(99, 102, 241, 0);
-        }
-      }
-
-      :host ::ng-deep .tiptap-button.is-active.pulse {
-        animation: pulse 2s infinite;
-      }
-
       /* Responsive */
       @media (max-width: 768px) {
         .tiptap-bubble-menu {
           padding: 6px 10px;
           gap: 4px;
-        }
-
-        :host ::ng-deep .tiptap-button {
-          width: 32px;
-          height: 32px;
-        }
-
-        :host ::ng-deep .tiptap-button .material-symbols-outlined {
-          font-size: 18px;
-        }
-
-        :host ::ng-deep .tiptap-button.text-button {
-          padding: 0 8px;
-          font-size: 13px;
         }
       }
     `,

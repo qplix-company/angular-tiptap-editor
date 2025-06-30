@@ -647,6 +647,24 @@ export class App {
     <img src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=500&h=300&fit=crop" class="tiptap-image" alt="Image de démonstration - Mode lecture seule">
   `);
 
+  // Méthodes pour le menu image
+  onImageChanged(event: { src: string; alt: string; title: string }) {
+    console.log("Image changée:", event);
+  }
+
+  onImageDeleted() {
+    console.log("Image supprimée");
+  }
+
+  onImageResized(event: { size: string }) {
+    console.log("Image redimensionnée:", event.size);
+  }
+
+  toggleImageMenu() {
+    // Cette méthode peut être utilisée pour afficher/masquer le menu
+    console.log("Toggle menu image");
+  }
+
   // Méthodes pour changer le contenu
   onBasicContentChange(content: string) {
     this.basicContent.set(content);
@@ -796,6 +814,8 @@ export class App {
 
   // Méthode utilitaire pour l'affichage JSON
   JSON = JSON;
+
+  showImageMenu = signal(true);
 }
 
 bootstrapApplication(App, {
