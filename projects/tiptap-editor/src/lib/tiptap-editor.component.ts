@@ -30,7 +30,6 @@ import { ImageService } from "./services/image.service";
 import { ImageUploadResult } from "./services/image.service";
 import { ToolbarConfig } from "./toolbar.component";
 import { BubbleMenuConfig } from "./bubble-menu.component";
-import { TiptapImageMenuComponent } from "./tiptap-image-menu.component";
 
 // Configuration par défaut de la toolbar
 export const DEFAULT_TOOLBAR_CONFIG: ToolbarConfig = {
@@ -66,7 +65,6 @@ export const DEFAULT_BUBBLE_MENU_CONFIG: BubbleMenuConfig = {
     TiptapBubbleMenuComponent,
     TiptapToolbarComponent,
     TiptapImageUploadComponent,
-    TiptapImageMenuComponent,
   ],
   template: `
     <div class="tiptap-editor">
@@ -90,7 +88,6 @@ export const DEFAULT_BUBBLE_MENU_CONFIG: BubbleMenuConfig = {
         [class.drag-over]="isDragOver()"
         (dragover)="onDragOver($event)"
         (drop)="onDrop($event)"
-        (click)="onEditorContentClick($event)"
       ></div>
 
       <!-- Compteur de caractères -->
@@ -101,22 +98,6 @@ export const DEFAULT_BUBBLE_MENU_CONFIG: BubbleMenuConfig = {
         {{ maxCharacters() }}
         }
       </div>
-      }
-
-      <!-- Menu contextuel image Angular -->
-      @if (showImageMenu() && editor()) {
-      <tiptap-image-menu
-        [editor]="editor()!"
-        [config]="imageMenuConfig"
-        (imageChanged)="onImageChanged($event)"
-        (imageDeleted)="onImageDeleted()"
-        (imageResized)="onImageResized($event)"
-        [ngStyle]="{
-          left: imageMenuPosition().x + 'px',
-          top: imageMenuPosition().y + 'px',
-          position: 'fixed'
-        }"
-      />
       }
     </div>
 
@@ -712,10 +693,6 @@ export class TiptapEditorComponent
   private onChange = (value: string) => {};
   private onTouched = () => {};
 
-  showImageMenu = signal(false);
-  imageMenuPosition = signal({ x: 0, y: 0 });
-  imageMenuConfig = { change: true, resize: true, delete: true };
-
   constructor(private imageService: ImageService) {
     // Effect pour surveiller les changements d'édition
     effect(() => {
@@ -794,6 +771,22 @@ export class TiptapEditorComponent
       );
     }
 
+    // Ajouter le Bubble Menu pour les images avec un nom unique
+    extensions.push(
+      BubbleMenu.configure({
+        pluginKey: "imageBubbleMenu", // Nom unique pour éviter les conflits
+        element: this.createImageMenuElement(),
+        shouldShow: ({ editor }) => {
+          // Afficher le menu image seulement quand une image est sélectionnée ET que l'éditeur est éditable
+          return editor.isActive("resizableImage") && this.editable();
+        },
+        tippyOptions: {
+          placement: "top-start", // Positionner en haut à gauche
+          offset: [0, 8], // Décalage vers le haut
+        },
+      })
+    );
+
     if (this.showCharacterCount()) {
       extensions.push(
         CharacterCount.configure({
@@ -833,6 +826,94 @@ export class TiptapEditorComponent
         this.editorBlur.emit({ editor, event });
       },
     });
+  }
+
+  private createImageMenuElement(): HTMLElement {
+    const imageMenuEl = document.createElement("div");
+    imageMenuEl.className = "image-menu";
+
+    // Bouton pour changer l'image
+    const changeBtn = this.createImageMenuButton(
+      "edit",
+      "Changer l'image",
+      () => this.changeImage()
+    );
+    imageMenuEl.appendChild(changeBtn);
+
+    // Séparateur
+    const separator1 = document.createElement("div");
+    separator1.className = "tiptap-separator";
+    imageMenuEl.appendChild(separator1);
+
+    // Boutons de redimensionnement
+    const resizeSmallBtn = this.createImageMenuButton(
+      "crop_square",
+      "Petite (300×200)",
+      () => this.imageService.resizeImageToSmall(this.editor()!)
+    );
+    imageMenuEl.appendChild(resizeSmallBtn);
+
+    const resizeMediumBtn = this.createImageMenuButton(
+      "crop_landscape",
+      "Moyenne (500×350)",
+      () => this.imageService.resizeImageToMedium(this.editor()!)
+    );
+    imageMenuEl.appendChild(resizeMediumBtn);
+
+    const resizeLargeBtn = this.createImageMenuButton(
+      "crop_free",
+      "Grande (800×600)",
+      () => this.imageService.resizeImageToLarge(this.editor()!)
+    );
+    imageMenuEl.appendChild(resizeLargeBtn);
+
+    const resizeOriginalBtn = this.createImageMenuButton(
+      "restore",
+      "Taille originale",
+      () => this.imageService.resizeImageToOriginal(this.editor()!)
+    );
+    imageMenuEl.appendChild(resizeOriginalBtn);
+
+    // Séparateur
+    const separator2 = document.createElement("div");
+    separator2.className = "tiptap-separator";
+    imageMenuEl.appendChild(separator2);
+
+    // Bouton pour supprimer l'image
+    const deleteBtn = this.createImageMenuButton(
+      "delete",
+      "Supprimer l'image",
+      () => this.deleteImage(),
+      "danger"
+    );
+    imageMenuEl.appendChild(deleteBtn);
+
+    return imageMenuEl;
+  }
+
+  private createImageMenuButton(
+    iconName: string,
+    title: string,
+    onClick: () => void,
+    className?: string
+  ): HTMLButtonElement {
+    const button = document.createElement("button");
+    button.className = `tiptap-button ${className || ""}`;
+    button.type = "button";
+    button.title = title;
+
+    // Créer l'icône Material Symbols
+    const icon = document.createElement("span");
+    icon.className = "material-symbols-outlined";
+    icon.textContent = iconName;
+    button.appendChild(icon);
+
+    button.addEventListener("click", (e) => {
+      e.preventDefault();
+      onClick();
+    });
+
+    return button;
   }
 
   private updateBubbleMenuButtonStates() {
@@ -1028,30 +1109,6 @@ export class TiptapEditorComponent
     const currentEditor = this.editor();
     if (currentEditor) {
       currentEditor.setEditable(!isDisabled);
-    }
-  }
-
-  onImageChanged(event: { src: string; alt: string; title: string }) {
-    // Logique métier ou callback utilisateur
-    this.showImageMenu.set(false);
-  }
-
-  onImageDeleted() {
-    this.showImageMenu.set(false);
-  }
-
-  onImageResized(event: { size: string }) {
-    // Optionnel : feedback utilisateur
-  }
-
-  onEditorContentClick(event: MouseEvent) {
-    const target = event.target as HTMLElement;
-    if (target && target.tagName === "IMG") {
-      const rect = target.getBoundingClientRect();
-      this.imageMenuPosition.set({ x: rect.left, y: rect.bottom + 8 });
-      this.showImageMenu.set(true);
-    } else {
-      this.showImageMenu.set(false);
     }
   }
 }
