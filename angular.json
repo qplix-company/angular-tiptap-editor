@@ -30,9 +30,14 @@
             "index": "src/index.html",
             "browser": "src/main.ts",
             "outputPath": "dist/demo",
-            "polyfills": ["zone.js"],
+            "polyfills": [
+              "zone.js"
+            ],
             "scripts": [],
-            "styles": ["node_modules/@fontsource/material-symbols-outlined/index.css", "src/global_styles.css"],
+            "styles": [
+              "node_modules/@fontsource/material-symbols-outlined/index.css",
+              "src/global_styles.css"
+            ],
             "tsConfig": "tsconfig.app.json"
           }
         },
@@ -54,6 +59,36 @@
       "root": "",
       "schematics": {},
       "sourceRoot": "src"
+    },
+    "tiptap-editor": {
+      "projectType": "library",
+      "root": "projects/tiptap-editor",
+      "sourceRoot": "projects/tiptap-editor/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/tiptap-editor/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/tiptap-editor/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:karma",
+          "options": {
+            "tsConfig": "projects/tiptap-editor/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
     }
   },
   "version": 1

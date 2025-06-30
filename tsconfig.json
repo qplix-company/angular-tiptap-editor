@@ -18,6 +18,11 @@
     "target": "ES2022",
     "module": "ES2022",
     "useDefineForClassFields": false,
+    "paths": {
+      "tiptap-editor": [
+        "./dist/tiptap-editor"
+      ]
+    },
     "lib": ["ES2022", "dom"]
   },
   "angularCompilerOptions": {
@@ -26,5 +31,13 @@
     "strictInputAccessModifiers": true,
     "strictTemplates": true,
     "strictStandalone": true
-  }
+  },
+  "references": [
+    {
+      "path": "./projects/tiptap-editor/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/tiptap-editor/tsconfig.spec.json"
+    }
+  ]
 }

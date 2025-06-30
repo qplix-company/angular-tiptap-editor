@@ -7,7 +7,7 @@ import {
   TiptapEditorComponent,
   ToolbarConfig,
   BubbleMenuConfig,
-} from "./lib/index";
+} from "tiptap-editor";
 import { MAT_ICON_DEFAULT_OPTIONS } from "@angular/material/icon";
 
 @Component({

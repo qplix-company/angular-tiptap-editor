@@ -1,0 +1,29 @@
+{
+  "name": "tiptap-editor",
+  "version": "0.0.1",
+  "description": "Un éditeur de texte riche basé sur Tiptap pour Angular",
+  "keywords": [
+    "angular",
+    "tiptap",
+    "editor",
+    "rich-text",
+    "wysiwyg"
+  ],
+  "author": "FloGeez",
+  "license": "MIT",
+  "peerDependencies": {
+    "@angular/common": "^20.0.0",
+    "@angular/core": "^20.0.0",
+    "@angular/forms": "^20.0.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0",
+    "@tiptap/core": "^2.0.0",
+    "@tiptap/starter-kit": "^2.0.0",
+    "@tiptap/extension-placeholder": "^2.0.0",
+    "@tiptap/extension-character-count": "^2.0.0",
+    "@tiptap/extension-bubble-menu": "^2.0.0",
+    "@intevation/tiptap-extension-office-paste": "^1.0.0"
+  },
+  "sideEffects": false
+}
