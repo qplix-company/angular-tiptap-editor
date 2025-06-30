@@ -249,32 +249,27 @@ export const DEFAULT_BUBBLE_MENU_CONFIG: BubbleMenuConfig = {
         outline-offset: 2px;
       }
 
-      /* Styles pour les conteneurs d'images avec alignement */
-      :host ::ng-deep .image-container {
-        margin: 0.5em 0;
+      /* Styles pour l'alignement des images */
+      :host ::ng-deep .ProseMirror .image-container {
         text-align: center;
-        border-radius: 16px;
-        overflow: hidden;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        margin: 1em 0;
       }
 
-      :host ::ng-deep .image-container.image-align-left {
+      :host ::ng-deep .ProseMirror .image-container.image-align-left {
         text-align: left;
       }
 
-      :host ::ng-deep .image-container.image-align-center {
+      :host ::ng-deep .ProseMirror .image-container.image-align-center {
         text-align: center;
       }
 
-      :host ::ng-deep .image-container.image-align-right {
+      :host ::ng-deep .ProseMirror .image-container.image-align-right {
         text-align: right;
       }
 
-      :host ::ng-deep .image-container img {
+      :host ::ng-deep .ProseMirror .image-container img {
         display: inline-block;
-        max-width: 100%;
-        height: auto;
-        border-radius: 16px;
+        margin: 0;
       }
 
       /* Poignées de redimensionnement */
@@ -354,23 +349,21 @@ export const DEFAULT_BUBBLE_MENU_CONFIG: BubbleMenuConfig = {
 
       /* Styles pour le menu contextuel des images */
       :host ::ng-deep .image-menu {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        padding: 4px;
         display: flex;
-        align-items: center;
-        gap: 6px;
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 16px;
-        padding: 8px 12px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+        gap: 2px;
         z-index: 1000;
-        animation: slideUp 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        animation: bubbleMenuFadeIn 0.2s ease-out;
       }
 
-      @keyframes slideUp {
+      @keyframes bubbleMenuFadeIn {
         from {
           opacity: 0;
-          transform: translateY(8px) scale(0.95);
+          transform: translateY(-8px) scale(0.95);
         }
         to {
           opacity: 1;
@@ -379,224 +372,40 @@ export const DEFAULT_BUBBLE_MENU_CONFIG: BubbleMenuConfig = {
       }
 
       :host ::ng-deep .image-menu .tiptap-button {
+        min-width: 32px;
+        height: 32px;
+        padding: 6px;
+        font-size: 13px;
+        border-radius: 4px;
+        background: none;
+        border: 1px solid transparent;
+        cursor: pointer;
+        color: #4a5568;
+        transition: all 0.2s ease;
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 36px;
-        height: 36px;
-        border: none;
-        background: transparent;
-        border-radius: 10px;
-        cursor: pointer;
-        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        color: #64748b;
-        position: relative;
-        overflow: hidden;
-      }
-
-      :host ::ng-deep .image-menu .tiptap-button::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(135deg, #6366f1, #8b5cf6);
-        opacity: 0;
-        transition: opacity 0.2s ease;
-        border-radius: 10px;
       }
 
       :host ::ng-deep .image-menu .tiptap-button:hover {
-        color: #6366f1;
-        transform: translateY(-1px);
-      }
-
-      :host ::ng-deep .image-menu .tiptap-button:hover::before {
-        opacity: 0.1;
+        background: #f1f5f9;
+        color: #2d3748;
       }
 
       :host ::ng-deep .image-menu .tiptap-button.danger:hover {
-        color: #ef4444;
-      }
-
-      :host ::ng-deep .image-menu .tiptap-button.danger:hover::before {
-        background: linear-gradient(135deg, #ef4444, #dc2626);
-        opacity: 0.1;
+        background: #fed7d7;
+        color: #c53030;
       }
 
       :host ::ng-deep .image-menu .tiptap-button .material-symbols-outlined {
-        font-size: 20px;
-        position: relative;
-        z-index: 1;
+        font-size: 16px;
       }
 
       :host ::ng-deep .image-menu .tiptap-separator {
+        height: 20px;
+        margin: 0 2px;
         width: 1px;
-        height: 28px;
-        background: linear-gradient(
-          to bottom,
-          transparent,
-          #e2e8f0,
-          transparent
-        );
-        margin: 0 4px;
-      }
-
-      /* Styles pour les images redimensionnables */
-      :host ::ng-deep .resizable-image-container {
-        position: relative;
-        display: inline-block;
-        margin: 0.5em 0;
-      }
-
-      :host ::ng-deep .resize-controls {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        pointer-events: none;
-        z-index: 1000;
-      }
-
-      :host ::ng-deep .resize-handle {
-        position: absolute;
-        width: 12px;
-        height: 12px;
-        background: #3b82f6;
-        border: 2px solid white;
-        border-radius: 50%;
-        pointer-events: all;
-        cursor: pointer;
-        z-index: 1001;
-        transition: all 0.15s ease;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-      }
-
-      :host ::ng-deep .resize-handle:hover {
-        background: #2563eb;
-        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
-      }
-
-      :host ::ng-deep .resize-handle:active {
-        background: #1d4ed8;
-      }
-
-      /* Poignées du milieu avec scale séparé */
-      :host ::ng-deep .resize-handle-n:hover,
-      :host ::ng-deep .resize-handle-s:hover {
-        transform: translateX(-50%) scale(1.2);
-      }
-
-      :host ::ng-deep .resize-handle-w:hover,
-      :host ::ng-deep .resize-handle-e:hover {
-        transform: translateY(-50%) scale(1.2);
-      }
-
-      :host ::ng-deep .resize-handle-n:active,
-      :host ::ng-deep .resize-handle-s:active {
-        transform: translateX(-50%) scale(0.9);
-      }
-
-      :host ::ng-deep .resize-handle-w:active,
-      :host ::ng-deep .resize-handle-e:active {
-        transform: translateY(-50%) scale(0.9);
-      }
-
-      /* Poignées des coins avec scale simple */
-      :host ::ng-deep .resize-handle-nw:hover,
-      :host ::ng-deep .resize-handle-ne:hover,
-      :host ::ng-deep .resize-handle-sw:hover,
-      :host ::ng-deep .resize-handle-se:hover {
-        transform: scale(1.2);
-      }
-
-      :host ::ng-deep .resize-handle-nw:active,
-      :host ::ng-deep .resize-handle-ne:active,
-      :host ::ng-deep .resize-handle-sw:active,
-      :host ::ng-deep .resize-handle-se:active {
-        transform: scale(0.9);
-      }
-
-      /* Positions spécifiques pour chaque poignée */
-      :host ::ng-deep .resize-handle-nw {
-        top: 0;
-        left: -6px;
-        cursor: nw-resize;
-      }
-      :host ::ng-deep .resize-handle-n {
-        top: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        cursor: n-resize;
-      }
-      :host ::ng-deep .resize-handle-ne {
-        top: 0;
-        right: -6px;
-        cursor: ne-resize;
-      }
-      :host ::ng-deep .resize-handle-w {
-        top: 50%;
-        left: -6px;
-        transform: translateY(-50%);
-        cursor: w-resize;
-      }
-      :host ::ng-deep .resize-handle-e {
-        top: 50%;
-        right: -6px;
-        transform: translateY(-50%);
-        cursor: e-resize;
-      }
-      :host ::ng-deep .resize-handle-sw {
-        bottom: 0;
-        left: -6px;
-        cursor: sw-resize;
-      }
-      :host ::ng-deep .resize-handle-s {
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        cursor: s-resize;
-      }
-      :host ::ng-deep .resize-handle-se {
-        bottom: 0;
-        right: -6px;
-        cursor: se-resize;
-      }
-
-      /* Styles pour le redimensionnement en cours */
-      :host ::ng-deep body.resizing {
-        user-select: none;
-        cursor: crosshair;
-      }
-
-      :host ::ng-deep body.resizing .ProseMirror {
-        pointer-events: none;
-      }
-
-      :host ::ng-deep body.resizing .ProseMirror .tiptap-image {
-        pointer-events: none;
-      }
-
-      /* Styles pour les informations de taille d'image */
-      :host ::ng-deep .image-size-info {
-        position: absolute;
-        bottom: -20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: rgba(0, 0, 0, 0.8);
-        color: white;
-        padding: 2px 6px;
-        border-radius: 3px;
-        font-size: 11px;
-        white-space: nowrap;
-        opacity: 0;
-        transition: opacity 0.2s ease;
-      }
-
-      :host ::ng-deep .image-container:hover .image-size-info {
-        opacity: 1;
+        background: #e2e8f0;
       }
 
       /* Styles pour les slash commands */
