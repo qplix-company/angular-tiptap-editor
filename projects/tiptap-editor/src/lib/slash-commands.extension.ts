@@ -215,8 +215,19 @@ export const SlashCommands = Extension.create({
 
   addProseMirrorPlugins() {
     const commands = this.options.commands as SlashCommandItem[];
-    let menuElement: HTMLElement | null = null;
-    let tippyInstance: TippyInstance | null = null;
+
+    // Utiliser une Map pour stocker les instances par éditeur
+    const editorInstances = new Map<
+      any,
+      { menuElement: HTMLElement | null; tippyInstance: TippyInstance | null }
+    >();
+
+    const getOrCreateInstance = (view: any) => {
+      if (!editorInstances.has(view)) {
+        editorInstances.set(view, { menuElement: null, tippyInstance: null });
+      }
+      return editorInstances.get(view)!;
+    };
 
     const filterCommands = (query: string): SlashCommandItem[] => {
       if (!query) return commands;
@@ -330,16 +341,17 @@ export const SlashCommands = Extension.create({
     };
 
     const initTippy = (view: any) => {
-      if (!menuElement) return;
+      const instance = getOrCreateInstance(view);
+      if (!instance.menuElement) return;
 
       // Détruire l'ancienne instance si elle existe
-      if (tippyInstance) {
-        tippyInstance.destroy();
+      if (instance.tippyInstance) {
+        instance.tippyInstance.destroy();
       }
 
       // Créer l'instance Tippy
-      const instance = tippy(view.dom, {
-        content: menuElement,
+      const tippyInst = tippy(view.dom, {
+        content: instance.menuElement,
         trigger: "manual",
         followCursor: "horizontal",
         placement: "bottom-start",
@@ -349,13 +361,12 @@ export const SlashCommands = Extension.create({
         offset: [0, 8],
         hideOnClick: true,
         onShow(instance) {
-          // Empêcher le scroll en préservant la position actuelle
-          const scrollPos = window.scrollY;
-          setTimeout(() => window.scrollTo(0, scrollPos), 0);
+          // Désactiver complètement le scroll automatique pour éviter les problèmes multi-éditeurs
+          // Le menu apparaîtra à la position du curseur sans modifier le scroll
         },
         onClickOutside() {
           // Fermer le menu quand on clique en dehors
-          hideMenu();
+          hideMenu(view);
         },
         popperOptions: {
           modifiers: [
@@ -376,22 +387,21 @@ export const SlashCommands = Extension.create({
       });
 
       // tippy() peut retourner un tableau, on prend le premier élément
-      tippyInstance = Array.isArray(instance) ? instance[0] : instance;
+      instance.tippyInstance = Array.isArray(tippyInst)
+        ? tippyInst[0]
+        : tippyInst;
     };
 
     const getCursorRect = (view: any): DOMRect => {
       try {
-        const { selection } = view.state;
-        const { from } = selection;
-        const coords = view.coordsAtPos(from);
+        // Utiliser l'API DOM native comme dans le bubble menu
+        const selection = window.getSelection();
+        if (!selection || selection.rangeCount === 0) {
+          return new DOMRect(0, 0, 0, 0);
+        }
 
-        // Créer un DOMRect à partir des coordonnées ProseMirror
-        return new DOMRect(
-          coords.left,
-          coords.top,
-          0,
-          coords.bottom - coords.top
-        );
+        const range = selection.getRangeAt(0);
+        return range.getBoundingClientRect();
       } catch (error) {
         console.warn("Erreur lors du calcul des coordonnées:", error);
         return new DOMRect(0, 0, 0, 0);
@@ -400,17 +410,18 @@ export const SlashCommands = Extension.create({
 
     const updateMenu = (view: any, state: SlashCommandsState) => {
       if (!state.active || state.filteredCommands.length === 0) {
-        hideMenu();
+        hideMenu(view);
         return;
       }
 
-      if (!menuElement) {
-        menuElement = createMenu();
+      const instance = getOrCreateInstance(view);
+      if (!instance.menuElement) {
+        instance.menuElement = createMenu();
         initTippy(view);
       }
 
       // Vider le menu
-      menuElement.innerHTML = "";
+      instance.menuElement.innerHTML = "";
 
       // Ajouter les commandes filtrées
       state.filteredCommands.forEach((command, index) => {
@@ -464,35 +475,41 @@ export const SlashCommands = Extension.create({
           }
         });
 
-        menuElement!.appendChild(item);
+        if (instance.menuElement) {
+          instance.menuElement.appendChild(item);
+        }
       });
 
       // Afficher le menu avec Tippy
       showMenu(view);
 
       // Faire défiler vers l'élément sélectionné si nécessaire
-      const selectedItem = menuElement.querySelector(
-        ".slash-command-item.selected"
-      ) as HTMLElement;
-      if (selectedItem) {
-        selectedItem.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      if (instance.menuElement) {
+        const selectedItem = instance.menuElement.querySelector(
+          ".slash-command-item.selected"
+        ) as HTMLElement;
+        if (selectedItem) {
+          selectedItem.scrollIntoView({ block: "nearest", behavior: "smooth" });
+        }
       }
     };
 
     const showMenu = (view: any) => {
-      if (!tippyInstance) return;
+      const instance = getOrCreateInstance(view);
+      if (!instance.tippyInstance) return;
 
       // Mettre à jour la position de référence
-      // tippyInstance.setProps({
-      //   getReferenceClientRect: () => getCursorRect(view),
-      // });
+      instance.tippyInstance.setProps({
+        getReferenceClientRect: () => getCursorRect(view),
+      });
 
-      tippyInstance.show();
+      instance.tippyInstance.show();
     };
 
-    const hideMenu = () => {
-      if (tippyInstance) {
-        tippyInstance.hide();
+    const hideMenu = (view: any) => {
+      const instance = getOrCreateInstance(view);
+      if (instance.tippyInstance) {
+        instance.tippyInstance.hide();
       }
       // Ne pas détruire l'instance, juste la cacher
     };
@@ -510,7 +527,7 @@ export const SlashCommands = Extension.create({
       view.dispatch(tr);
 
       // Masquer le menu immédiatement
-      hideMenu();
+      hideMenu(view);
 
       // Exécuter la commande avec l'éditeur après un court délai pour s'assurer que la transaction est terminée
       setTimeout(() => {
@@ -690,7 +707,7 @@ export const SlashCommands = Extension.create({
             if (event.key === "Escape") {
               event.preventDefault();
               event.stopPropagation();
-              hideMenu();
+              hideMenu(view);
               // Supprimer le texte slash
               if (pluginState.range) {
                 const { tr } = view.state;
@@ -723,12 +740,16 @@ export const SlashCommands = Extension.create({
               }
             },
             destroy: () => {
-              hideMenu();
-              if (tippyInstance) {
-                tippyInstance.destroy();
-                tippyInstance = null;
-              }
-              menuElement = null;
+              // La view n'est pas disponible ici, on nettoie toutes les instances
+              editorInstances.forEach((instance, view) => {
+                hideMenu(view);
+                if (instance.tippyInstance) {
+                  instance.tippyInstance.destroy();
+                  instance.tippyInstance = null;
+                }
+                instance.menuElement = null;
+              });
+              editorInstances.clear();
             },
           };
         },

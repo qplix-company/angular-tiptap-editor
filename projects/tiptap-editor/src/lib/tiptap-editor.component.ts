@@ -26,6 +26,7 @@ import { TiptapToolbarComponent } from "./toolbar.component";
 import { TiptapImageUploadComponent } from "./tiptap-image-upload.component";
 import { TiptapBubbleMenuComponent } from "./tiptap-bubble-menu.component";
 import { TiptapImageBubbleMenuComponent } from "./tiptap-image-bubble-menu.component";
+import { TiptapSlashCommandsComponent } from "./tiptap-slash-commands.component";
 import { ImageService } from "./services/image.service";
 import { ImageUploadResult } from "./services/image.service";
 import { ToolbarConfig } from "./toolbar.component";
@@ -80,6 +81,7 @@ export const DEFAULT_IMAGE_BUBBLE_MENU_CONFIG: ImageBubbleMenuConfig = {
     TiptapImageUploadComponent,
     TiptapBubbleMenuComponent,
     TiptapImageBubbleMenuComponent,
+    TiptapSlashCommandsComponent,
   ],
   template: `
     <div class="tiptap-editor">
@@ -120,6 +122,11 @@ export const DEFAULT_IMAGE_BUBBLE_MENU_CONFIG: ImageBubbleMenuConfig = {
         [editor]="editor()!"
         [config]="imageBubbleMenuConfig()"
       ></tiptap-image-bubble-menu>
+      }
+
+      <!-- Slash Commands -->
+      @if (enableSlashCommands() && editor()) {
+      <tiptap-slash-commands [editor]="editor()!"></tiptap-slash-commands>
       }
 
       <!-- Compteur de caractères -->
@@ -719,30 +726,27 @@ export class TiptapEditorComponent
       );
     }
 
-    // Ajouter les Slash Commands si activés
-    if (this.enableSlashCommands()) {
-      extensions.push(
-        SlashCommands.configure({
-          onImageUpload: async (file: File) => {
-            try {
-              const result = await this.imageService.compressImage(file);
-              return {
-                src: result.src,
-                name: result.name,
-                width: result.width,
-                height: result.height,
-              };
-            } catch (error) {
-              console.error("Erreur lors de l'upload d'image:", error);
-              throw error;
-            }
-          },
-        })
-      );
-    }
-
-    // Note: Les bubble menus (texte et images) sont maintenant gérés entièrement par les composants Angular
-    // TiptapBubbleMenuComponent et TiptapImageBubbleMenuComponent
+    // Note: Les slash commands sont maintenant gérés par le composant TiptapSlashCommandsComponent
+    // if (this.enableSlashCommands()) {
+    //   extensions.push(
+    //     SlashCommands.configure({
+    //       onImageUpload: async (file: File) => {
+    //         try {
+    //           const result = await this.imageService.compressImage(file);
+    //           return {
+    //             src: result.src,
+    //             name: result.name,
+    //             width: result.width,
+    //             height: result.height,
+    //           };
+    //         } catch (error) {
+    //           console.error("Erreur lors de l'upload d'image:", error);
+    //           throw error;
+    //         }
+    //       },
+    //     })
+    //   );
+    // }
 
     if (this.showCharacterCount()) {
       extensions.push(
