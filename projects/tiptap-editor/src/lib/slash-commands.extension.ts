@@ -341,12 +341,22 @@ export const SlashCommands = Extension.create({
       const instance = tippy(view.dom, {
         content: menuElement,
         trigger: "manual",
+        followCursor: "horizontal",
         placement: "bottom-start",
         appendTo: () => document.body,
         interactive: true,
         arrow: false,
         offset: [0, 8],
-        hideOnClick: false,
+        hideOnClick: true,
+        onShow(instance) {
+          // Empêcher le scroll en préservant la position actuelle
+          const scrollPos = window.scrollY;
+          setTimeout(() => window.scrollTo(0, scrollPos), 0);
+        },
+        onClickOutside() {
+          // Fermer le menu quand on clique en dehors
+          hideMenu();
+        },
         popperOptions: {
           modifiers: [
             {
@@ -473,9 +483,9 @@ export const SlashCommands = Extension.create({
       if (!tippyInstance) return;
 
       // Mettre à jour la position de référence
-      tippyInstance.setProps({
-        getReferenceClientRect: () => getCursorRect(view),
-      });
+      // tippyInstance.setProps({
+      //   getReferenceClientRect: () => getCursorRect(view),
+      // });
 
       tippyInstance.show();
     };
