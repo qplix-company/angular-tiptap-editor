@@ -19,7 +19,7 @@
     "@fontsource/material-symbols-outlined": "^5.2.14",
     "@intevation/tiptap-extension-office-paste": "^0.1.0",
     "@tiptap/core": "^2.1.13",
-    "@tiptap/extension-bubble-menu": "^2.1.13",
+    "@tiptap/extension-bubble-menu": "^2.23.1",
     "@tiptap/extension-character-count": "^2.1.13",
     "@tiptap/extension-image": "^2.1.13",
     "@tiptap/extension-placeholder": "^2.1.13",
