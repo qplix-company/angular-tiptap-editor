@@ -1,6 +1,7 @@
 import {
   Component,
   input,
+  output,
   ViewChild,
   ElementRef,
   OnInit,
@@ -12,7 +13,7 @@ import {
 } from "@angular/core";
 import tippy, { Instance as TippyInstance } from "tippy.js";
 import type { Editor } from "@tiptap/core";
-import { ImageService } from "./services/image.service";
+import { ImageService, ImageUploadResult } from "./services/image.service";
 import { Plugin, PluginKey } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";
 
@@ -87,25 +88,80 @@ export const DEFAULT_SLASH_COMMANDS: SlashCommandItem[] = [
     icon: "image",
     keywords: ["image", "photo", "picture", "img"],
     command: (editor) => {
-      // Logique d'upload d'image
+      // Créer un input file temporaire pour sélectionner une image
       const input = document.createElement("input");
       input.type = "file";
       input.accept = "image/*";
       input.style.display = "none";
 
-      input.addEventListener("change", (e) => {
+      input.addEventListener("change", async (e) => {
         const file = (e.target as HTMLInputElement).files?.[0];
         if (file && file.type.startsWith("image/")) {
-          // Ici on pourrait utiliser le service d'upload
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            const src = e.target?.result as string;
-            if (src) {
-              // Utiliser directement setResizableImage car c'est configuré dans l'éditeur
-              editor.chain().focus().setResizableImage({ src }).run();
-            }
-          };
-          reader.readAsDataURL(file);
+          try {
+            // Utiliser la méthode de compression unifiée
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+            const img = new Image();
+
+            img.onload = () => {
+              // Vérifier les dimensions (max 1920x1080)
+              const maxWidth = 1920;
+              const maxHeight = 1080;
+              let { width, height } = img;
+
+              // Redimensionner si nécessaire
+              if (width > maxWidth || height > maxHeight) {
+                const ratio = Math.min(maxWidth / width, maxHeight / height);
+                width *= ratio;
+                height *= ratio;
+              }
+
+              canvas.width = width;
+              canvas.height = height;
+
+              // Dessiner l'image redimensionnée
+              ctx?.drawImage(img, 0, 0, width, height);
+
+              // Convertir en base64 avec compression
+              canvas.toBlob(
+                (blob) => {
+                  if (blob) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                      const base64 = e.target?.result as string;
+                      if (base64) {
+                        // Utiliser setResizableImage avec toutes les propriétés
+                        editor
+                          .chain()
+                          .focus()
+                          .setResizableImage({
+                            src: base64,
+                            alt: file.name,
+                            title: `${file.name} (${Math.round(
+                              width
+                            )}×${Math.round(height)})`,
+                            width: Math.round(width),
+                            height: Math.round(height),
+                          })
+                          .run();
+                      }
+                    };
+                    reader.readAsDataURL(blob);
+                  }
+                },
+                file.type,
+                0.8 // qualité de compression
+              );
+            };
+
+            img.onerror = () => {
+              console.error("Erreur lors du chargement de l'image");
+            };
+
+            img.src = URL.createObjectURL(file);
+          } catch (error) {
+            console.error("Erreur lors de l'upload:", error);
+          }
         }
         document.body.removeChild(input);
       });
@@ -235,6 +291,9 @@ export class TiptapSlashCommandsComponent implements OnInit, OnDestroy {
     commands: DEFAULT_SLASH_COMMANDS,
   });
 
+  // Output pour l'upload d'image
+  imageUploadRequested = output<File>();
+
   @ViewChild("menuRef", { static: false }) menuRef!: ElementRef<HTMLDivElement>;
 
   private tippyInstance: TippyInstance | null = null;
@@ -248,7 +307,36 @@ export class TiptapSlashCommandsComponent implements OnInit, OnDestroy {
   // Signal pour l'index sélectionné
   selectedIndex = signal(0);
 
-  commands = computed(() => this.config().commands || DEFAULT_SLASH_COMMANDS);
+  commands = computed(() => {
+    const configCommands = this.config().commands || DEFAULT_SLASH_COMMANDS;
+    // Remplacer la commande image par une version qui utilise l'output
+    return configCommands.map((command) => {
+      if (command.icon === "image") {
+        return {
+          ...command,
+          command: (editor: Editor) => {
+            // Créer un input file temporaire
+            const input = document.createElement("input");
+            input.type = "file";
+            input.accept = "image/*";
+            input.style.display = "none";
+
+            input.addEventListener("change", (e) => {
+              const file = (e.target as HTMLInputElement).files?.[0];
+              if (file && file.type.startsWith("image/")) {
+                this.imageUploadRequested.emit(file);
+              }
+              document.body.removeChild(input);
+            });
+
+            document.body.appendChild(input);
+            input.click();
+          },
+        };
+      }
+      return command;
+    });
+  });
 
   filteredCommands = computed(() => {
     const query = this.currentQuery().toLowerCase();

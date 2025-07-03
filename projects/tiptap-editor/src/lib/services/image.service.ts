@@ -34,6 +34,14 @@ export class ImageService {
   isImageSelected = computed(() => this.selectedImage() !== null);
   isResizing = signal(false);
 
+  // Signaux pour l'upload
+  isUploading = signal(false);
+  uploadProgress = signal(0);
+  uploadMessage = signal("");
+
+  // Référence à l'éditeur pour les mises à jour
+  private currentEditor: Editor | null = null;
+
   // Méthodes pour la gestion des images
   selectImage(editor: Editor): void {
     if (editor.isActive("resizableImage")) {
@@ -197,42 +205,6 @@ export class ImageService {
     }
   }
 
-  // Méthodes pour l'upload d'images
-  async uploadImage(file: File): Promise<ImageUploadResult> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-
-      reader.onload = (e) => {
-        const base64 = e.target?.result as string;
-        if (base64) {
-          // Créer une image temporaire pour obtenir les dimensions
-          const img = new Image();
-          img.onload = () => {
-            const result: ImageUploadResult = {
-              src: base64,
-              name: file.name,
-              size: file.size,
-              type: file.type,
-              width: img.width,
-              height: img.height,
-              originalSize: file.size,
-            };
-            resolve(result);
-          };
-          img.onerror = () =>
-            reject(new Error("Erreur lors du chargement de l'image"));
-          img.src = base64;
-        } else {
-          reject(new Error("Erreur lors de la lecture du fichier"));
-        }
-      };
-
-      reader.onerror = () =>
-        reject(new Error("Erreur lors de la lecture du fichier"));
-      reader.readAsDataURL(file);
-    });
-  }
-
   // Méthodes utilitaires
   private updateSelectedImage(attributes: Partial<ImageData>): void {
     const current = this.selectedImage();
@@ -273,6 +245,13 @@ export class ImageService {
       const img = new Image();
 
       img.onload = () => {
+        // Mise à jour du progrès
+        if (this.isUploading()) {
+          this.uploadProgress.set(40);
+          this.uploadMessage.set("Redimensionnement...");
+          this.forceEditorUpdate();
+        }
+
         let { width, height } = img;
 
         // Redimensionner si nécessaire
@@ -287,6 +266,13 @@ export class ImageService {
 
         // Dessiner l'image redimensionnée
         ctx?.drawImage(img, 0, 0, width, height);
+
+        // Mise à jour du progrès
+        if (this.isUploading()) {
+          this.uploadProgress.set(60);
+          this.uploadMessage.set("Compression...");
+          this.forceEditorUpdate();
+        }
 
         // Convertir en base64 avec compression
         canvas.toBlob(
@@ -323,6 +309,127 @@ export class ImageService {
       img.onerror = () =>
         reject(new Error("Erreur lors du chargement de l'image"));
       img.src = URL.createObjectURL(file);
+    });
+  }
+
+  // Méthode unifiée pour uploader et insérer une image
+  async uploadAndInsertImage(
+    editor: Editor,
+    file: File,
+    options?: {
+      quality?: number;
+      maxWidth?: number;
+      maxHeight?: number;
+    }
+  ): Promise<void> {
+    try {
+      // Stocker la référence à l'éditeur
+      this.currentEditor = editor;
+
+      this.isUploading.set(true);
+      this.uploadProgress.set(0);
+      this.uploadMessage.set("Validation du fichier...");
+      this.forceEditorUpdate();
+
+      // Validation
+      const validation = this.validateImage(file);
+      if (!validation.valid) {
+        throw new Error(validation.error);
+      }
+
+      this.uploadProgress.set(20);
+      this.uploadMessage.set("Compression en cours...");
+      this.forceEditorUpdate();
+
+      // Petit délai pour permettre à l'utilisateur de voir la progression
+      await new Promise((resolve) => setTimeout(resolve, 200));
+
+      const result = await this.compressImage(
+        file,
+        options?.quality || 0.8,
+        options?.maxWidth || 1920,
+        options?.maxHeight || 1080
+      );
+
+      this.uploadProgress.set(80);
+      this.uploadMessage.set("Insertion dans l'éditeur...");
+      this.forceEditorUpdate();
+
+      // Petit délai pour l'insertion
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      this.insertImage(editor, {
+        src: result.src,
+        alt: result.name,
+        title: `${result.name} (${result.width}×${result.height})`,
+        width: result.width,
+        height: result.height,
+      });
+
+      // L'image est insérée, maintenant on peut cacher l'indicateur
+      this.isUploading.set(false);
+      this.uploadProgress.set(0);
+      this.uploadMessage.set("");
+      this.forceEditorUpdate();
+      this.currentEditor = null;
+    } catch (error) {
+      this.isUploading.set(false);
+      this.uploadProgress.set(0);
+      this.uploadMessage.set("");
+      this.forceEditorUpdate();
+      this.currentEditor = null;
+      console.error("Erreur lors de l'upload d'image:", error);
+      throw error;
+    }
+  }
+
+  // Méthode pour forcer la mise à jour de l'éditeur
+  private forceEditorUpdate() {
+    if (this.currentEditor) {
+      // Déclencher une transaction vide pour forcer la mise à jour des décorations
+      const { tr } = this.currentEditor.state;
+      this.currentEditor.view.dispatch(tr);
+    }
+  }
+
+  // Méthode pour créer un sélecteur de fichier et uploader une image
+  async selectAndUploadImage(
+    editor: Editor,
+    options?: {
+      quality?: number;
+      maxWidth?: number;
+      maxHeight?: number;
+      accept?: string;
+    }
+  ): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = options?.accept || "image/*";
+      input.style.display = "none";
+
+      input.addEventListener("change", async (e) => {
+        const file = (e.target as HTMLInputElement).files?.[0];
+        if (file && file.type.startsWith("image/")) {
+          try {
+            await this.uploadAndInsertImage(editor, file, options);
+            resolve();
+          } catch (error) {
+            reject(error);
+          }
+        } else {
+          reject(new Error("Aucun fichier image sélectionné"));
+        }
+        document.body.removeChild(input);
+      });
+
+      input.addEventListener("cancel", () => {
+        document.body.removeChild(input);
+        reject(new Error("Sélection annulée"));
+      });
+
+      document.body.appendChild(input);
+      input.click();
     });
   }
 }

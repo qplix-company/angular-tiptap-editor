@@ -20,14 +20,16 @@ import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
 import CharacterCount from "@tiptap/extension-character-count";
 import OfficePaste from "@intevation/tiptap-extension-office-paste";
-import { SlashCommands } from "./slash-commands.extension";
+
 import { ResizableImage } from "./extensions/resizable-image.extension";
+import { UploadProgress } from "./extensions/upload-progress.extension";
 import { TiptapToolbarComponent } from "./toolbar.component";
 import { TiptapImageUploadComponent } from "./tiptap-image-upload.component";
 import { TiptapBubbleMenuComponent } from "./tiptap-bubble-menu.component";
 import { TiptapImageBubbleMenuComponent } from "./tiptap-image-bubble-menu.component";
 import { TiptapSlashCommandsComponent } from "./tiptap-slash-commands.component";
 import { ImageService } from "./services/image.service";
+
 import { ImageUploadResult } from "./services/image.service";
 import { ToolbarConfig } from "./toolbar.component";
 import {
@@ -131,6 +133,7 @@ export const DEFAULT_IMAGE_BUBBLE_MENU_CONFIG: ImageBubbleMenuConfig = {
       <tiptap-slash-commands
         [editor]="editor()!"
         [style.display]="editorFullyInitialized() ? 'block' : 'none'"
+        (imageUploadRequested)="onSlashCommandImageUpload($event)"
       ></tiptap-slash-commands>
       }
 
@@ -720,6 +723,11 @@ export class TiptapEditorComponent
           class: "tiptap-image",
         },
       }),
+      UploadProgress.configure({
+        isUploading: () => this.imageService.isUploading(),
+        uploadProgress: () => this.imageService.uploadProgress(),
+        uploadMessage: () => this.imageService.uploadMessage(),
+      }),
     ];
 
     // Ajouter l'extension Office Paste si activée
@@ -732,28 +740,6 @@ export class TiptapEditorComponent
         })
       );
     }
-
-    // Note: Les slash commands sont maintenant gérés par le composant TiptapSlashCommandsComponent
-    // if (this.enableSlashCommands()) {
-    //   extensions.push(
-    //     SlashCommands.configure({
-    //       onImageUpload: async (file: File) => {
-    //         try {
-    //           const result = await this.imageService.compressImage(file);
-    //           return {
-    //             src: result.src,
-    //             name: result.name,
-    //             width: result.width,
-    //             height: result.height,
-    //           };
-    //         } catch (error) {
-    //           console.error("Erreur lors de l'upload d'image:", error);
-    //           throw error;
-    //         }
-    //       },
-    //     })
-    //   );
-    // }
 
     if (this.showCharacterCount()) {
       extensions.push(
@@ -820,6 +806,8 @@ export class TiptapEditorComponent
         src: result.src,
         alt: result.name,
         title: `${result.name} (${result.width}×${result.height})`,
+        width: result.width,
+        height: result.height,
       });
     }
   }
@@ -827,6 +815,18 @@ export class TiptapEditorComponent
   onImageUploadError(error: string) {
     console.error("Erreur upload image:", error);
     // Ici vous pourriez afficher une notification à l'utilisateur
+  }
+
+  // Gestion de l'upload d'image depuis les slash commands
+  async onSlashCommandImageUpload(file: File) {
+    const currentEditor = this.editor();
+    if (currentEditor) {
+      try {
+        await this.imageService.uploadAndInsertImage(currentEditor, file);
+      } catch (error) {
+        console.error("Erreur lors de l'upload d'image:", error);
+      }
+    }
   }
 
   onDragOver(event: DragEvent) {
@@ -849,21 +849,14 @@ export class TiptapEditorComponent
     }
   }
 
-  private insertImageFromFile(file: File) {
+  private async insertImageFromFile(file: File) {
     const currentEditor = this.editor();
     if (currentEditor) {
-      this.imageService
-        .uploadImage(file)
-        .then((result) => {
-          this.imageService.insertImage(currentEditor, {
-            src: result.src,
-            alt: result.name,
-            title: `${result.name} (${result.width}×${result.height})`,
-          });
-        })
-        .catch((error) => {
-          console.error("Erreur lors de l'upload:", error);
-        });
+      try {
+        await this.imageService.uploadAndInsertImage(currentEditor, file);
+      } catch (error) {
+        console.error("Erreur lors de l'upload:", error);
+      }
     }
   }
 

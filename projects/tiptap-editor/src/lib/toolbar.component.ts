@@ -1,9 +1,8 @@
-import { Component, input, output, signal } from "@angular/core";
+import { Component, input, output, signal, inject } from "@angular/core";
 import { Editor } from "@tiptap/core";
 import { TiptapButtonComponent } from "./tiptap-button.component";
 import { TiptapSeparatorComponent } from "./tiptap-separator.component";
-import { TiptapImageUploadComponent } from "./tiptap-image-upload.component";
-import { ImageUploadResult } from "./services/image.service";
+import { ImageUploadResult, ImageService } from "./services/image.service";
 import { EditorCommandsService } from "./services/editor-commands.service";
 
 export interface ToolbarConfig {
@@ -26,11 +25,7 @@ export interface ToolbarConfig {
 @Component({
   selector: "tiptap-toolbar",
   standalone: true,
-  imports: [
-    TiptapButtonComponent,
-    TiptapSeparatorComponent,
-    TiptapImageUploadComponent,
-  ],
+  imports: [TiptapButtonComponent, TiptapSeparatorComponent],
   template: `
     <div class="tiptap-toolbar">
       @if (config().bold) {
@@ -119,9 +114,10 @@ export interface ToolbarConfig {
       } @if (config().separator && config().image) {
       <tiptap-separator />
       } @if (config().image) {
-      <tiptap-image-upload
-        (imageSelected)="onImageSelected($event)"
-        (error)="onImageError($event)"
+      <tiptap-button
+        icon="image"
+        title="Ajouter une image"
+        (onClick)="insertImage()"
       />
       } @if (config().separator && (config().undo || config().redo)) {
       <tiptap-separator />
@@ -211,6 +207,8 @@ export class TiptapToolbarComponent {
   imageUploaded = output<ImageUploadResult>();
   imageError = output<string>();
 
+  private imageService = inject(ImageService);
+
   constructor(private editorCommands: EditorCommandsService) {}
 
   isActive(name: string, attributes?: Record<string, any>): boolean {
@@ -252,7 +250,17 @@ export class TiptapToolbarComponent {
     this.editorCommands.redo(this.editor());
   }
 
-  // Méthodes pour les événements d'image
+  // Méthode pour insérer une image
+  async insertImage() {
+    try {
+      await this.imageService.selectAndUploadImage(this.editor());
+    } catch (error) {
+      console.error("Erreur lors de l'upload d'image:", error);
+      this.imageError.emit("Erreur lors de l'upload d'image");
+    }
+  }
+
+  // Méthodes pour les événements d'image (conservées pour compatibilité)
   onImageSelected(result: ImageUploadResult) {
     this.imageUploaded.emit(result);
   }

@@ -18,7 +18,7 @@ export * from "./lib/services/editor-commands.service";
 
 // Extensions
 export * from "./lib/extensions/resizable-image.extension";
-export * from "./lib/slash-commands.extension";
+export * from "./lib/extensions/upload-progress.extension";
 
 // Types et interfaces
 export type { ToolbarConfig } from "./lib/toolbar.component";
