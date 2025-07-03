@@ -61,15 +61,78 @@ import { MAT_ICON_DEFAULT_OPTIONS } from "@angular/material/icon";
         </div>
       </div>
 
-      <!-- Basic Editor -->
+      <!-- Toolbar Complète -->
       <div class="demo-section">
-        <h2>✨ Éditeur de Base avec Material Icons</h2>
+        <h2>🔧 Toolbar Complète - Toutes les Fonctionnalités</h2>
         <p>
-          Un éditeur simple avec toolbar complète utilisant les icônes Material
-          Design :
+          Découvrez toutes les fonctionnalités disponibles dans la toolbar avec
+          les nouvelles extensions :
         </p>
         <tiptap-editor
+          [content]="fullToolbarContent()"
+          [toolbar]="{
+            bold: true,
+            italic: true,
+            underline: true,
+            strike: true,
+            code: true,
+            superscript: true,
+            subscript: true,
+            highlight: true,
+            heading1: true,
+            heading2: true,
+            heading3: true,
+            bulletList: true,
+            orderedList: true,
+            blockquote: true,
+            alignLeft: true,
+            alignCenter: true,
+            alignRight: true,
+            alignJustify: true,
+            link: true,
+            image: true,
+            horizontalRule: true,
+            undo: true,
+            redo: true,
+            separator: true
+          }"
+          placeholder="Testez toutes les fonctionnalités de formatage..."
+          (contentChange)="onFullToolbarContentChange($event)"
+        >
+        </tiptap-editor>
+        <div
+          style="margin-top: 12px; padding: 8px; background: #e6f3ff; border-radius: 4px; font-size: 14px;"
+        >
+          <strong>✨ Toutes les fonctionnalités :</strong>
+          <br />• <strong>Formatage :</strong> Gras, Italique, Souligné, Barré,
+          Code, Exposant, Indice, Surbrillance <br />•
+          <strong>Structure :</strong> Titres H1/H2/H3, Listes, Citations, Ligne
+          horizontale <br />• <strong>Alignement :</strong> Gauche, Centre,
+          Droite, Justifié <br />• <strong>Contenu :</strong> Liens, Images avec
+          menu contextuel <br />• <strong>Actions :</strong> Annuler, Refaire
+        </div>
+      </div>
+
+      <!-- Basic Editor -->
+      <div class="demo-section">
+        <h2>✨ Éditeur de Base Simplifié</h2>
+        <p>Un éditeur simple avec les fonctionnalités essentielles :</p>
+        <tiptap-editor
           [content]="basicContent()"
+          [toolbar]="{
+            bold: true,
+            italic: true,
+            underline: true,
+            heading1: true,
+            heading2: true,
+            bulletList: true,
+            orderedList: true,
+            link: true,
+            image: true,
+            undo: true,
+            redo: true,
+            separator: true
+          }"
           placeholder="Commencez à écrire..."
           (contentChange)="onBasicContentChange($event)"
         >
@@ -78,9 +141,9 @@ import { MAT_ICON_DEFAULT_OPTIONS } from "@angular/material/icon";
           style="margin-top: 12px; padding: 8px; background: #e6f3ff; border-radius: 4px; font-size: 14px;"
         >
           <strong>💡 Astuce:</strong> Sélectionnez du texte pour voir apparaître
-          le bubble menu flottant avec des icônes Material ! Cliquez sur l'icône
-          📷 pour ajouter une image, puis cliquez sur l'image pour voir le menu
-          contextuel !
+          le bubble menu flottant ! Utilisez les slash commands avec
+          <strong>/</strong>
+          pour insérer rapidement des éléments structurels.
         </div>
       </div>
 
@@ -176,6 +239,9 @@ Configuration: {{ JSON.stringify(currentBubbleMenuConfig(), null, 2) }}
           <button class="config-button" (click)="setFullToolbar()">
             Toolbar Complète
           </button>
+          <button class="config-button" (click)="setSuperToolbar()">
+            Toolbar SUPER Complète
+          </button>
           <button class="config-button secondary" (click)="setCustomToolbar()">
             Configuration Custom
           </button>
@@ -195,6 +261,52 @@ Configuration actuelle: {{ JSON.stringify(currentToolbarConfig(), null, 2) }}
           (contentChange)="onToolbarDemoContentChange($event)"
         >
         </tiptap-editor>
+      </div>
+
+      <!-- Guide d'utilisation -->
+      <div class="demo-section">
+        <h2>📋 Guide d'Utilisation Rapide</h2>
+        <p>
+          Les principales configurations pour utiliser l'éditeur dans vos
+          projets :
+        </p>
+
+        <div
+          style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 16px; margin: 16px 0;"
+        >
+          <h4 style="margin-top: 0;">🚀 Import requis :</h4>
+          <div
+            style="background: #2d3748; color: #e2e8f0; padding: 12px; border-radius: 4px; font-family: monospace; font-size: 14px;"
+          >
+            import {{ "{" }} TiptapEditorComponent {{ "}" }} from
+            'tiptap-editor';
+          </div>
+
+          <h4>✨ Configuration de base :</h4>
+          <p
+            style="font-family: monospace; font-size: 14px; background: #e6f3ff; padding: 8px; border-radius: 4px;"
+          >
+            bold, italic, underline, heading1, heading2, bulletList,
+            orderedList, link, image, undo, redo
+          </p>
+
+          <h4>🔧 Configuration complète :</h4>
+          <p
+            style="font-family: monospace; font-size: 12px; background: #e6f3ff; padding: 8px; border-radius: 4px;"
+          >
+            bold, italic, underline, strike, code, superscript, subscript,
+            highlight, heading1-3, bulletList, orderedList, blockquote,
+            alignLeft/Center/Right/Justify, link, image, horizontalRule, undo,
+            redo
+          </p>
+
+          <h4>🎈 Bubble Menu recommandé :</h4>
+          <p
+            style="font-family: monospace; font-size: 14px; background: #e6f3ff; padding: 8px; border-radius: 4px;"
+          >
+            bold, italic, underline, strike, code, highlight, link
+          </p>
+        </div>
       </div>
 
       <!-- Office Paste Demo -->
@@ -597,6 +709,31 @@ export class App {
     "<p>Testez les <strong>slash commands</strong> ! Tapez <code>/</code> n'importe où pour voir le menu des commandes avec des icônes Material.</p><p>Exemples à essayer :</p><ul><li>Tapez <strong>/titre</strong> pour filtrer les titres</li><li>Tapez <strong>/liste</strong> pour les listes</li><li>Tapez <strong>/image</strong> pour insérer une image</li></ul>"
   );
 
+  fullToolbarContent = signal(
+    `<h2>🔧 Démonstration Toolbar Complète</h2>
+    <p>Testez toutes les fonctionnalités de formatage :</p>
+    <p><strong>Gras</strong>, <em>Italique</em>, <u>Souligné</u>, <s>Barré</s>, <code>Code</code>, <sup>Exposant</sup>, <sub>Indice</sub>, <mark>Surbrillance</mark></p>
+    <h3>Alignements</h3>
+    <p>Texte aligné à gauche (par défaut)</p>
+    <p style="text-align: center">Texte centré</p>
+    <p style="text-align: right">Texte aligné à droite</p>
+    <p style="text-align: justify">Texte justifié - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+    <h3>Listes et Structure</h3>
+    <ul>
+      <li>Liste à puces</li>
+      <li>Avec plusieurs éléments</li>
+    </ul>
+    <ol>
+      <li>Liste numérotée</li>
+      <li>Avec ordre</li>
+    </ol>
+    <blockquote>
+      <p>Citation avec style</p>
+    </blockquote>
+    <hr>
+    <p>Ligne horizontale ci-dessus. Testez aussi les <a href="https://tiptap.dev">liens</a> !</p>`
+  );
+
   editorState = signal("Inactif");
   showAdvancedEditor = signal(false);
 
@@ -688,6 +825,10 @@ export class App {
     this.slashCommandsContent.set(content);
   }
 
+  onFullToolbarContentChange(content: string) {
+    this.fullToolbarContent.set(content);
+  }
+
   // Méthodes pour les événements d'éditeur
   onEditorFocus() {
     this.editorState.set("En cours d'édition 🖊️");
@@ -739,6 +880,7 @@ export class App {
     this.currentToolbarConfig.set({
       bold: true,
       italic: true,
+      underline: true,
       strike: true,
       code: true,
       heading1: true,
@@ -747,7 +889,38 @@ export class App {
       bulletList: true,
       orderedList: true,
       blockquote: true,
+      link: true,
       image: true,
+      horizontalRule: true,
+      undo: true,
+      redo: true,
+      separator: true,
+    });
+  }
+
+  setSuperToolbar() {
+    this.currentToolbarConfig.set({
+      bold: true,
+      italic: true,
+      underline: true,
+      strike: true,
+      code: true,
+      superscript: true,
+      subscript: true,
+      highlight: true,
+      heading1: true,
+      heading2: true,
+      heading3: true,
+      bulletList: true,
+      orderedList: true,
+      blockquote: true,
+      alignLeft: true,
+      alignCenter: true,
+      alignRight: true,
+      alignJustify: true,
+      link: true,
+      image: true,
+      horizontalRule: true,
       undo: true,
       redo: true,
       separator: true,
@@ -780,8 +953,13 @@ export class App {
     this.currentBubbleMenuConfig.set({
       bold: true,
       italic: true,
+      underline: true,
       strike: true,
       code: true,
+      superscript: true,
+      subscript: true,
+      highlight: true,
+      link: true,
       separator: true,
     });
   }
