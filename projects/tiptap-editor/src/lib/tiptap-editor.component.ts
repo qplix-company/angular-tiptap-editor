@@ -174,7 +174,7 @@ export const DEFAULT_IMAGE_BUBBLE_MENU_CONFIG: ImageBubbleMenuConfig = {
       /* Contenu de l'éditeur */
       .tiptap-content {
         padding: 16px;
-        min-height: var(--editor-min-height, 300px);
+        min-height: var(--editor-min-height, 200px);
         outline: none;
         position: relative;
       }
@@ -556,7 +556,7 @@ export class TiptapEditorComponent
   content = input<string>("");
   placeholder = input<string>("Start typing...");
   editable = input<boolean>(true);
-  minHeight = input<number>(300);
+  minHeight = input<number>(200);
   showToolbar = input<boolean>(true);
   showCharacterCount = input<boolean>(true);
   maxCharacters = input<number | undefined>(undefined);

@@ -149,11 +149,11 @@ export interface ToolbarConfig {
         display: flex;
         align-items: center;
         gap: 4px;
-        padding: 8px 12px;
+        padding: 4px 8px;
         background: #f8f9fa;
         border-bottom: 1px solid #e2e8f0;
         flex-wrap: wrap;
-        min-height: 48px;
+        min-height: 32px;
         position: relative;
       }
 
