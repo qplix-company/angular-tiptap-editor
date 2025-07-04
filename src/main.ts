@@ -30,7 +30,11 @@ import { computed } from "@angular/core";
   template: `
     <div class="app" #appRef>
       <!-- Layout principal -->
-      <div class="container" [class.sidebar-hidden]="!showSidebar()">
+      <div
+        class="container"
+        [class.sidebar-hidden]="!showSidebar()"
+        [class.sidebar-open]="showSidebar() || isTransitioning()"
+      >
         <!-- Éditeur principal -->
         <main class="editor-main">
           <!-- Actions de l'éditeur - Toujours visibles -->
@@ -503,6 +507,13 @@ import { computed } from "@angular/core";
         background: #fafafa;
         min-height: 100vh;
         position: relative;
+        transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      /* Ajustement de l'éditeur quand le sidebar est ouvert */
+      .sidebar-open .editor-main {
+        max-width: 800px;
+        transform: translateX(-40px);
       }
 
       .container.sidebar-hidden .editor-main {
@@ -1562,6 +1573,11 @@ import { computed } from "@angular/core";
           height: 44px;
         }
 
+        /* Pas de décalage sur tablette - sidebar en bas */
+        .sidebar-open .editor-main {
+          transform: none;
+        }
+
         .container {
           flex-direction: column;
         }
@@ -1599,7 +1615,7 @@ import { computed } from "@angular/core";
         }
 
         .editor-main {
-          padding: 1.5rem;
+          padding: 1rem;
           order: 1;
           min-height: auto;
         }
@@ -1693,6 +1709,11 @@ import { computed } from "@angular/core";
           padding: 1rem;
         }
 
+        /* Pas de décalage sur mobile */
+        .sidebar-open .editor-main {
+          transform: none;
+        }
+
         .container.sidebar-hidden .editor-main {
           padding: 1rem;
         }
@@ -1768,6 +1789,11 @@ import { computed } from "@angular/core";
 
         .editor-main {
           padding: 0.75rem;
+        }
+
+        /* Pas de décalage sur mobile */
+        .sidebar-open .editor-main {
+          transform: none;
         }
 
         .container.sidebar-hidden .editor-main {
@@ -2425,7 +2451,7 @@ export class ExampleComponent {
       setTimeout(() => {
         this.isTransitioning.set(false);
         this.showSidebar.set(true);
-      }, 900);
+      }, 650);
     }
   }
 
