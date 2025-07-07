@@ -9,6 +9,47 @@ import {
 import { ConfigItem } from "../types/editor-config.types";
 import { EditorConfigurationService } from "./editor-configuration.service";
 
+// Valeurs par défaut de la librairie (copiées depuis tiptap-editor.component.ts)
+const DEFAULT_TOOLBAR_CONFIG = {
+  bold: true,
+  italic: true,
+  underline: true,
+  strike: true,
+  code: true,
+  superscript: false,
+  subscript: false,
+  highlight: true,
+  heading1: true,
+  heading2: true,
+  heading3: true,
+  bulletList: true,
+  orderedList: true,
+  blockquote: true,
+  alignLeft: false,
+  alignCenter: false,
+  alignRight: false,
+  alignJustify: false,
+  link: true,
+  image: true,
+  horizontalRule: true,
+  undo: true,
+  redo: true,
+  separator: true,
+};
+
+const DEFAULT_BUBBLE_MENU_CONFIG = {
+  bold: true,
+  italic: true,
+  underline: true,
+  strike: true,
+  code: true,
+  superscript: false,
+  subscript: false,
+  highlight: true,
+  link: true,
+  separator: true,
+};
+
 @Injectable({
   providedIn: "root",
 })
@@ -25,58 +66,205 @@ export class CodeGeneratorService {
     const currentLocale = this.i18nService.currentLocale();
     const codeGen = this.appI18nService.codeGeneration();
 
+    // Détecter les fonctionnalités activées et si elles diffèrent des valeurs par défaut
+    const hasActiveToolbar = this.hasActiveItems(toolbarConfig, TOOLBAR_ITEMS);
+    const hasActiveBubbleMenu = this.hasActiveItems(
+      bubbleMenuConfig,
+      BUBBLE_MENU_ITEMS
+    );
+    const hasActiveSlashCommands = activeSlashCommands.size > 0;
+
+    const isToolbarDefault = this.isToolbarDefault(toolbarConfig);
+    const isBubbleMenuDefault = this.isBubbleMenuDefault(bubbleMenuConfig);
+    const isSlashCommandsDefault =
+      this.isSlashCommandsDefault(activeSlashCommands);
+
     // Générer l'input locale si une langue spécifique est sélectionnée
     const localeInput = currentLocale
       ? `\n      [locale]="${currentLocale}"`
       : "";
 
-    return `${this.generateImports()}
+    return `${this.generateImports(
+      hasActiveToolbar && !isToolbarDefault,
+      hasActiveBubbleMenu && !isBubbleMenuDefault,
+      hasActiveSlashCommands && !isSlashCommandsDefault
+    )}
 
-${this.generateComponentDecorator(editorState, localeInput)}
+${this.generateComponentDecorator(
+  editorState,
+  localeInput,
+  hasActiveToolbar && !isToolbarDefault,
+  hasActiveBubbleMenu && !isBubbleMenuDefault,
+  hasActiveSlashCommands && !isSlashCommandsDefault
+)}
 export class TiptapDemoComponent {
   
+  // ============================================================================
+  // DEMO CONTENT
+  // ============================================================================
   ${this.generateDemoContent(codeGen)}
 
-  ${this.generateToolbarConfig(toolbarConfig, codeGen)}
+  ${
+    hasActiveToolbar && !isToolbarDefault
+      ? this.generateToolbarConfig(toolbarConfig, codeGen)
+      : ""
+  }
 
-  ${this.generateBubbleMenuConfig(bubbleMenuConfig, codeGen)}
+  ${
+    hasActiveBubbleMenu && !isBubbleMenuDefault
+      ? this.generateBubbleMenuConfig(bubbleMenuConfig, codeGen)
+      : ""
+  }
 
-  ${this.generateSlashCommandsConfig(activeSlashCommands, codeGen)}
+  ${
+    hasActiveSlashCommands && !isSlashCommandsDefault
+      ? this.generateSlashCommandsConfig(activeSlashCommands, codeGen)
+      : ""
+  }
 
   ${this.generateContentChangeHandler(codeGen)}
 }`;
   }
 
-  private generateImports(): string {
-    return `import { Component } from '@angular/core';
-import { TiptapEditorComponent } from 'tiptap-editor';`;
+  private hasActiveItems(
+    config: Record<string, boolean>,
+    items: ConfigItem[]
+  ): boolean {
+    return items.some(
+      (item) => item.key !== "separator" && config[item.key] === true
+    );
+  }
+
+  private isToolbarDefault(config: Record<string, boolean>): boolean {
+    // Comparer avec les valeurs par défaut pour tous les éléments
+    const allKeys = Object.keys(DEFAULT_TOOLBAR_CONFIG);
+
+    return allKeys.every((key) => {
+      const configValue = config[key] === true;
+      const defaultValue =
+        DEFAULT_TOOLBAR_CONFIG[key as keyof typeof DEFAULT_TOOLBAR_CONFIG] ===
+        true;
+      return configValue === defaultValue;
+    });
+  }
+
+  private isBubbleMenuDefault(config: Record<string, boolean>): boolean {
+    // Comparer avec les valeurs par défaut pour tous les éléments
+    const allKeys = Object.keys(DEFAULT_BUBBLE_MENU_CONFIG);
+
+    return allKeys.every((key) => {
+      const configValue = config[key] === true;
+      const defaultValue =
+        DEFAULT_BUBBLE_MENU_CONFIG[
+          key as keyof typeof DEFAULT_BUBBLE_MENU_CONFIG
+        ] === true;
+      return configValue === defaultValue;
+    });
+  }
+
+  private isSlashCommandsDefault(activeCommands: Set<string>): boolean {
+    // Pour les slash commands, on considère qu'ils sont par défaut si on utilise DEFAULT_SLASH_COMMANDS
+    // Pour l'instant, on considère qu'ils sont par défaut si toutes les commandes de base sont présentes
+    const defaultCommands = [
+      "heading1",
+      "heading2",
+      "heading3",
+      "bulletList",
+      "orderedList",
+      "blockquote",
+      "code",
+      "image",
+      "horizontalRule",
+    ];
+    const activeCommandsArray = Array.from(activeCommands);
+
+    return (
+      defaultCommands.length === activeCommandsArray.length &&
+      defaultCommands.every((cmd) => activeCommandsArray.includes(cmd))
+    );
+  }
+
+  private generateImports(
+    hasToolbar: boolean,
+    hasBubbleMenu: boolean,
+    hasSlashCommands: boolean
+  ): string {
+    const imports = [
+      "import { Component } from '@angular/core';",
+      "import { TiptapEditorComponent } from 'tiptap-editor';",
+    ];
+
+    // Ajouter les imports conditionnels selon les fonctionnalités utilisées
+    if (hasToolbar || hasBubbleMenu || hasSlashCommands) {
+      imports.push("import { DEFAULT_SLASH_COMMANDS } from 'tiptap-editor';");
+    }
+
+    return `// ============================================================================
+// IMPORTS
+// ============================================================================
+${imports.join("\n")}`;
   }
 
   private generateComponentDecorator(
     editorState: any,
-    localeInput: string
+    localeInput: string,
+    hasToolbar: boolean,
+    hasBubbleMenu: boolean,
+    hasSlashCommands: boolean
   ): string {
+    const templateProps = [
+      `[content]="${this.appI18nService.codeGeneration().demoContentVar}"`,
+    ];
+
+    // Ajouter les props conditionnelles seulement si la config diffère des valeurs par défaut
+    if (hasToolbar) {
+      templateProps.push(
+        `[toolbar]="${this.appI18nService.codeGeneration().toolbarConfigVar}"`
+      );
+    }
+
+    if (hasBubbleMenu) {
+      templateProps.push(
+        `[bubbleMenu]="${
+          this.appI18nService.codeGeneration().bubbleMenuConfigVar
+        }"`
+      );
+    }
+
+    // Props toujours présentes
+    templateProps.push(
+      `[showBubbleMenu]="${editorState.showBubbleMenu}"`,
+      `[enableSlashCommands]="${editorState.enableSlashCommands}"`,
+      `[showToolbar]="${editorState.showToolbar}"`,
+      `[placeholder]="${editorState.placeholder}"`,
+      `(contentChange)="${
+        this.appI18nService.codeGeneration().onContentChangeVar
+      }($event)"`
+    );
+
+    // Ajouter slashCommandsConfig seulement si des commandes sont actives ET différentes des valeurs par défaut
+    if (hasSlashCommands) {
+      templateProps.splice(
+        4,
+        0,
+        `[slashCommandsConfig]="${
+          this.appI18nService.codeGeneration().slashCommandsConfigVar
+        }"`
+      );
+    }
+
+    // Ajouter locale si spécifié
+    if (localeInput) {
+      templateProps.splice(1, 0, localeInput.trim());
+    }
+
     return `@Component({
   selector: 'app-tiptap-demo',
   standalone: true,
   imports: [TiptapEditorComponent],
   template: \`
     <tiptap-editor
-      [content]="${this.appI18nService.codeGeneration().demoContentVar}"
-      [toolbar]="${this.appI18nService.codeGeneration().toolbarConfigVar}"
-      [bubbleMenu]="${
-        this.appI18nService.codeGeneration().bubbleMenuConfigVar
-      }"${localeInput}
-      [showBubbleMenu]="${editorState.showBubbleMenu}"
-      [enableSlashCommands]="${editorState.enableSlashCommands}"
-      [slashCommandsConfig]="${
-        this.appI18nService.codeGeneration().slashCommandsConfigVar
-      }"
-      [showToolbar]="${editorState.showToolbar}"
-      [placeholder]="${editorState.placeholder}"
-      (contentChange)="${
-        this.appI18nService.codeGeneration().onContentChangeVar
-      }($event)"
+      ${templateProps.join("\n      ")}
     >
     </tiptap-editor>
   \`
@@ -89,7 +277,11 @@ import { TiptapEditorComponent } from 'tiptap-editor';`;
   }
 
   private generateToolbarConfig(toolbarConfig: any, codeGen: any): string {
-    return `// ${codeGen.toolbarConfigComment}
+    return `
+  // ============================================================================
+  // TOOLBAR CONFIGURATION
+  // ============================================================================
+  ${codeGen.toolbarConfigComment}
   ${codeGen.toolbarConfigVar} = {
 ${this.generateSimpleConfig(toolbarConfig, TOOLBAR_ITEMS)}
   };`;
@@ -99,7 +291,11 @@ ${this.generateSimpleConfig(toolbarConfig, TOOLBAR_ITEMS)}
     bubbleMenuConfig: any,
     codeGen: any
   ): string {
-    return `// ${codeGen.bubbleMenuConfigComment}
+    return `
+  // ============================================================================
+  // BUBBLE MENU CONFIGURATION
+  // ============================================================================
+  ${codeGen.bubbleMenuConfigComment}
   ${codeGen.bubbleMenuConfigVar} = {
 ${this.generateSimpleConfig(bubbleMenuConfig, BUBBLE_MENU_ITEMS)}
   };`;
@@ -109,7 +305,11 @@ ${this.generateSimpleConfig(bubbleMenuConfig, BUBBLE_MENU_ITEMS)}
     activeSlashCommands: any,
     codeGen: any
   ): string {
-    return `// ${codeGen.slashCommandsConfigComment}
+    return `
+  // ============================================================================
+  // SLASH COMMANDS CONFIGURATION
+  // ============================================================================
+  ${codeGen.slashCommandsConfigComment}
   ${codeGen.slashCommandsConfigVar} = {
     commands: [
 ${this.generateCompleteSlashCommandsConfig(activeSlashCommands)}
@@ -118,7 +318,11 @@ ${this.generateCompleteSlashCommandsConfig(activeSlashCommands)}
   }
 
   private generateContentChangeHandler(codeGen: any): string {
-    return `// ${codeGen.onContentChangeComment}
+    return `
+  // ============================================================================
+  // EVENT HANDLERS
+  // ============================================================================
+  ${codeGen.onContentChangeComment}
   ${codeGen.onContentChangeVar}(content: string) {
     console.log('${codeGen.contentChangedLog}', content);
   }`;
