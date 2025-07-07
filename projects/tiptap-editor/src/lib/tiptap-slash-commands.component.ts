@@ -349,7 +349,10 @@ export class TiptapSlashCommandsComponent implements OnInit, OnDestroy {
     return commands.filter(
       (command) =>
         command.title.toLowerCase().includes(query) ||
-        command.description.toLowerCase().includes(query)
+        command.description.toLowerCase().includes(query) ||
+        command.keywords.some((keyword) =>
+          keyword.toLowerCase().includes(query)
+        )
     );
   });
 
