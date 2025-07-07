@@ -1,4 +1,4 @@
-import { Component, inject, ElementRef, effect } from "@angular/core";
+import { Component, inject, ElementRef, effect, computed } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ConfigSectionComponent } from "./config-section.component";
 import { EditorConfigurationService } from "../services/editor-configuration.service";
@@ -9,6 +9,9 @@ import {
   TOOLBAR_ITEMS,
   BUBBLE_MENU_ITEMS,
   SLASH_COMMAND_ITEMS,
+  createToolbarItems,
+  createBubbleMenuItems,
+  createSlashCommandItems,
 } from "../config/editor-items.config";
 
 @Component({
@@ -67,25 +70,13 @@ import {
           </div>
         </div>
 
-        <!-- Actions de l'éditeur dans la sidebar -->
-        <div class="editor-controls">
-          <button
-            class="editor-control-btn"
-            (click)="clearContent()"
-            [title]="appI18n.tooltips().clearEditorContent"
-          >
-            <span class="material-symbols-outlined">delete</span>
-            <span>{{ appI18n.ui().clearEditor }}</span>
-          </button>
-        </div>
-
         <!-- Configuration sections -->
         <div class="config-sections">
           <!-- Toolbar -->
           <app-config-section
             [title]="appI18n.config().toolbar"
             icon="build"
-            [items]="toolbarItems"
+            [items]="toolbarItems()"
             [isEnabled]="editorState().showToolbar"
             [activeCount]="toolbarActiveCount()"
             [isDropdownOpen]="menuState().showToolbarMenu"
@@ -99,7 +90,7 @@ import {
           <app-config-section
             [title]="appI18n.config().bubbleMenu"
             icon="chat_bubble"
-            [items]="bubbleMenuItems"
+            [items]="bubbleMenuItems()"
             [isEnabled]="editorState().showBubbleMenu"
             [activeCount]="bubbleMenuActiveCount()"
             [isDropdownOpen]="menuState().showBubbleMenuMenu"
@@ -113,7 +104,7 @@ import {
           <app-config-section
             [title]="appI18n.config().slashCommands"
             icon="flash_on"
-            [items]="slashCommandItems"
+            [items]="slashCommandItems()"
             [isEnabled]="editorState().enableSlashCommands"
             [activeCount]="slashCommandsActiveCount()"
             [isDropdownOpen]="menuState().showSlashCommandsMenu"
@@ -122,75 +113,6 @@ import {
             (toggleDropdown)="toggleSlashCommandsMenu()"
             (toggleItem)="toggleSlashCommand($event)"
           />
-
-          <!-- Section Langue -->
-          <app-config-section
-            [title]="appI18n.config().language"
-            icon="language"
-          >
-            <div class="config-controls">
-              <div class="language-switch-container">
-                <div class="language-switch-label">
-                  {{ appI18n.config().editorLanguage }}
-                </div>
-                <div class="language-switch-wrapper">
-                  <div
-                    class="language-switch"
-                    [class.french]="currentLocale() === 'fr'"
-                  >
-                    <div class="language-options">
-                      <button
-                        class="language-option"
-                        [class.active]="currentLocale() === 'en'"
-                        (click)="setLanguage('en')"
-                        [title]="appI18n.ui().english"
-                      >
-                        <span class="flag-icon">🇺🇸</span>
-                        <span class="language-label">EN</span>
-                      </button>
-                      <button
-                        class="language-option"
-                        [class.active]="currentLocale() === 'fr'"
-                        (click)="setLanguage('fr')"
-                        [title]="appI18n.ui().french"
-                      >
-                        <span class="flag-icon">🇫🇷</span>
-                        <span class="language-label">FR</span>
-                      </button>
-                    </div>
-                    <div
-                      class="language-slider"
-                      [class.slide-right]="currentLocale() === 'fr'"
-                    ></div>
-                  </div>
-                </div>
-                <div class="language-info">
-                  <span class="current-language">
-                    {{
-                      currentLocale() === "fr"
-                        ? appI18n.ui().french
-                        : appI18n.ui().english
-                    }}
-                  </span>
-                  <span class="auto-detect-note" *ngIf="isAutoDetected">
-                    ({{ appI18n.ui().autoDetection }})
-                  </span>
-                </div>
-                <div class="auto-detect-button" *ngIf="!isAutoDetected">
-                  <button
-                    class="btn-auto-detect"
-                    (click)="autoDetectLanguage()"
-                    [title]="appI18n.tooltips().autoDetectLanguage"
-                  >
-                    <span class="material-symbols-outlined"
-                      >auto_detect_voice</span
-                    >
-                    <span>{{ appI18n.ui().autoDetect }}</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </app-config-section>
         </div>
 
         <!-- Footer -->
@@ -270,18 +192,6 @@ import {
                 <span>{{ slashCommandsActiveCount() }}</span>
               </div>
             </div>
-          </div>
-
-          <!-- Actions de l'éditeur dans la sidebar -->
-          <div class="editor-controls">
-            <button
-              class="editor-control-btn"
-              (click)="clearContent()"
-              title="Vider l'éditeur"
-            >
-              <span class="material-symbols-outlined">delete</span>
-              <span>Vider l'éditeur</span>
-            </button>
           </div>
 
           <!-- Configuration sections -->
@@ -426,28 +336,6 @@ import {
       .status-item.active {
         color: #6366f1;
         background: rgba(99, 102, 241, 0.1);
-      }
-
-      .editor-controls {
-        padding: 1rem 1.5rem;
-        border-bottom: 1px solid #e2e8f0;
-        background: white;
-      }
-
-      .editor-control-btn {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0 12px;
-        height: 32px;
-        background: transparent;
-        color: #ef4444;
-        border: none;
-        border-radius: 8px;
-        font-size: 14px;
-        cursor: pointer;
-        width: 100%;
-        justify-content: center;
       }
 
       .config-sections {
@@ -616,174 +504,6 @@ import {
       .form-select option {
         padding: 0.5rem;
       }
-
-      /* Styles pour le switch de langue */
-      .language-switch-container {
-        padding: 1rem;
-      }
-
-      .language-switch-label {
-        font-size: 0.875rem;
-        font-weight: 500;
-        color: #374151;
-        margin-bottom: 0.75rem;
-      }
-
-      .language-switch-wrapper {
-        display: flex;
-        justify-content: center;
-        margin-bottom: 0.75rem;
-      }
-
-      .language-switch {
-        position: relative;
-        display: flex;
-        background: #f1f5f9;
-        border-radius: 12px;
-        padding: 4px;
-        width: 140px;
-        height: 48px;
-        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
-      }
-
-      .language-options {
-        display: flex;
-        width: 100%;
-        z-index: 2;
-        position: relative;
-      }
-
-      .language-option {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 2px;
-        background: transparent;
-        border: none;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        border-radius: 8px;
-        padding: 4px;
-        position: relative;
-      }
-
-      .language-option.active {
-        color: #6366f1;
-      }
-
-      .flag-icon {
-        font-size: 16px;
-        line-height: 1;
-      }
-
-      .language-label {
-        font-size: 0.75rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-
-      .language-slider {
-        position: absolute;
-        top: 4px;
-        left: 4px;
-        width: calc(50% - 4px);
-        height: calc(100% - 8px);
-        background: linear-gradient(135deg, #6366f1, #8b5cf6);
-        border-radius: 8px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
-        z-index: 1;
-      }
-
-      .language-slider.slide-right {
-        transform: translateX(100%);
-      }
-
-      .language-info {
-        text-align: center;
-        margin-top: 0.5rem;
-      }
-
-      .current-language {
-        font-size: 0.875rem;
-        font-weight: 500;
-        color: #6366f1;
-      }
-
-      .auto-detect-note {
-        font-size: 0.75rem;
-        color: #64748b;
-        margin-left: 0.5rem;
-      }
-
-      /* Animation au hover */
-      .language-option:hover {
-        background: #f1f5f9;
-      }
-
-      .language-option.active:hover {
-        background: #f1f5f9;
-      }
-
-      /* Effet de pulse sur le switch */
-      .language-switch:hover .language-slider {
-        box-shadow: 0 2px 12px rgba(99, 102, 241, 0.4);
-      }
-
-      /* Bouton de détection automatique */
-      .auto-detect-button {
-        display: flex;
-        justify-content: center;
-        margin-top: 0.75rem;
-      }
-
-      .btn-auto-detect {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 1rem;
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 8px;
-        color: #64748b;
-        font-size: 0.8rem;
-        cursor: pointer;
-        transition: all 0.2s ease;
-      }
-
-      .btn-auto-detect:hover {
-        background: #e2e8f0;
-        color: #475569;
-      }
-
-      .btn-auto-detect .material-symbols-outlined {
-        font-size: 16px;
-      }
-
-      /* Responsive pour mobile */
-      @media (max-width: 480px) {
-        .language-switch {
-          width: 120px;
-          height: 42px;
-        }
-
-        .flag-icon {
-          font-size: 14px;
-        }
-
-        .language-label {
-          font-size: 0.7rem;
-        }
-
-        .btn-auto-detect {
-          font-size: 0.75rem;
-          padding: 0.4rem 0.8rem;
-        }
-      }
     `,
   ],
 })
@@ -801,20 +521,18 @@ export class ConfigurationPanelComponent {
   readonly bubbleMenuActiveCount = this.configService.bubbleMenuActiveCount;
   readonly slashCommandsActiveCount =
     this.configService.slashCommandsActiveCount;
-  readonly currentLocale = this.i18nService.currentLocale;
-
-  // Configuration des items
-  readonly toolbarItems = TOOLBAR_ITEMS;
-  readonly bubbleMenuItems = BUBBLE_MENU_ITEMS;
-  readonly slashCommandItems = SLASH_COMMAND_ITEMS;
-
-  // État pour la langue
-  isAutoDetected = false;
+  // Configuration des items avec traductions
+  readonly toolbarItems = computed(() =>
+    createToolbarItems(this.appI18n.items())
+  );
+  readonly bubbleMenuItems = computed(() =>
+    createBubbleMenuItems(this.appI18n.items())
+  );
+  readonly slashCommandItems = computed(() =>
+    createSlashCommandItems(this.appI18n.items())
+  );
 
   constructor() {
-    // Initialiser l'état de détection automatique
-    this.isAutoDetected = true; // Par défaut, le service fait une détection automatique
-
     // Ajouter le listener pour fermer les dropdowns
     effect(() => {
       const handleClickOutside = (event: MouseEvent) => {
@@ -961,26 +679,7 @@ export class ConfigurationPanelComponent {
     this.configService.resetToDefaults();
   }
 
-  clearContent() {
-    this.configService.clearContent();
-  }
-
   copyCode() {
     this.codeGeneratorService.copyCode();
-  }
-
-  setLanguage(locale: "en" | "fr") {
-    this.i18nService.setLocale(locale);
-    this.isAutoDetected = false;
-  }
-
-  autoDetectLanguage() {
-    const browserLang = navigator.language.toLowerCase();
-    if (browserLang.startsWith("fr")) {
-      this.i18nService.setLocale("fr");
-    } else {
-      this.i18nService.setLocale("en");
-    }
-    this.isAutoDetected = true;
   }
 }

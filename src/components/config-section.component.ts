@@ -26,7 +26,7 @@ import { EditorConfigurationService } from "../services/editor-configuration.ser
       </div>
 
       <div class="section-content" [class.collapsed]="!isEnabled">
-        <div class="dropdown-section">
+        <div class="dropdown-section" [class.open]="isDropdownOpen">
           <div class="dropdown-trigger" (click)="onToggleDropdown()">
             <span
               >{{ appI18n.config().selectOptions }} ({{ activeCount }})</span
@@ -71,7 +71,7 @@ import { EditorConfigurationService } from "../services/editor-configuration.ser
         background: white;
         position: sticky;
         top: 0;
-        z-index: 1;
+        z-index: 5;
       }
 
       .section-title {
@@ -101,6 +101,11 @@ import { EditorConfigurationService } from "../services/editor-configuration.ser
       /* Dropdown */
       .dropdown-section {
         position: relative;
+        z-index: 10;
+      }
+
+      .dropdown-section.open {
+        z-index: 50;
       }
 
       .dropdown-trigger {
@@ -135,11 +140,15 @@ import { EditorConfigurationService } from "../services/editor-configuration.ser
         overflow: hidden;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         background: white;
+        position: relative;
+        z-index: 10;
       }
 
       .dropdown-content.open {
-        max-height: 350px;
-        overflow-y: auto;
+        max-height: 2000px;
+        overflow: visible;
+        position: relative;
+        z-index: 30;
       }
 
       .options-grid {

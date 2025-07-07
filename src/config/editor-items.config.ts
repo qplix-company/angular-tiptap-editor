@@ -1,5 +1,125 @@
 import { ConfigItem } from "../types/editor-config.types";
 
+// Factory functions pour créer les items avec les traductions
+export function createToolbarItems(itemLabels: any): ConfigItem[] {
+  return [
+    { key: "bold", label: itemLabels["bold"], icon: "format_bold" },
+    { key: "italic", label: itemLabels["italic"], icon: "format_italic" },
+    {
+      key: "underline",
+      label: itemLabels["underline"],
+      icon: "format_underlined",
+    },
+    {
+      key: "strike",
+      label: itemLabels["strike"],
+      icon: "format_strikethrough",
+    },
+    { key: "code", label: itemLabels["code"], icon: "code" },
+    {
+      key: "superscript",
+      label: itemLabels["superscript"],
+      icon: "superscript",
+    },
+    { key: "subscript", label: itemLabels["subscript"], icon: "subscript" },
+    { key: "highlight", label: itemLabels["highlight"], icon: "highlight" },
+    { key: "heading1", label: itemLabels["heading1"], icon: "title" },
+    { key: "heading2", label: itemLabels["heading2"], icon: "title" },
+    { key: "heading3", label: itemLabels["heading3"], icon: "title" },
+    {
+      key: "bulletList",
+      label: itemLabels["bulletList"],
+      icon: "format_list_bulleted",
+    },
+    {
+      key: "orderedList",
+      label: itemLabels["orderedList"],
+      icon: "format_list_numbered",
+    },
+    {
+      key: "blockquote",
+      label: itemLabels["blockquote"],
+      icon: "format_quote",
+    },
+    {
+      key: "alignLeft",
+      label: itemLabels["alignLeft"],
+      icon: "format_align_left",
+    },
+    {
+      key: "alignCenter",
+      label: itemLabels["alignCenter"],
+      icon: "format_align_center",
+    },
+    {
+      key: "alignRight",
+      label: itemLabels["alignRight"],
+      icon: "format_align_right",
+    },
+    {
+      key: "alignJustify",
+      label: itemLabels["alignJustify"],
+      icon: "format_align_justify",
+    },
+    { key: "link", label: itemLabels["link"], icon: "link" },
+    { key: "image", label: itemLabels["image"], icon: "image" },
+    {
+      key: "horizontalRule",
+      label: itemLabels["horizontalRule"],
+      icon: "horizontal_rule",
+    },
+    { key: "undo", label: itemLabels["undo"], icon: "undo" },
+    { key: "redo", label: itemLabels["redo"], icon: "redo" },
+    { key: "separator", label: itemLabels["separator"], icon: "more_vert" },
+  ];
+}
+
+export function createBubbleMenuItems(itemLabels: any): ConfigItem[] {
+  return [
+    { key: "bold", label: itemLabels.bold, icon: "format_bold" },
+    { key: "italic", label: itemLabels.italic, icon: "format_italic" },
+    {
+      key: "underline",
+      label: itemLabels.underline,
+      icon: "format_underlined",
+    },
+    { key: "strike", label: itemLabels.strike, icon: "format_strikethrough" },
+    { key: "code", label: itemLabels.code, icon: "code" },
+    { key: "superscript", label: itemLabels.superscript, icon: "superscript" },
+    { key: "subscript", label: itemLabels.subscript, icon: "subscript" },
+    { key: "highlight", label: itemLabels.highlight, icon: "highlight" },
+    { key: "link", label: itemLabels.link, icon: "link" },
+    { key: "separator", label: itemLabels.separator, icon: "more_vert" },
+  ];
+}
+
+export function createSlashCommandItems(itemLabels: any): ConfigItem[] {
+  return [
+    { key: "heading1", label: itemLabels.heading1, icon: "format_h1" },
+    { key: "heading2", label: itemLabels.heading2, icon: "format_h2" },
+    { key: "heading3", label: itemLabels.heading3, icon: "format_h3" },
+    {
+      key: "bulletList",
+      label: itemLabels.bulletList,
+      icon: "format_list_bulleted",
+    },
+    {
+      key: "orderedList",
+      label: itemLabels.orderedList,
+      icon: "format_list_numbered",
+    },
+    { key: "blockquote", label: itemLabels.blockquote, icon: "format_quote" },
+    { key: "code", label: itemLabels.code, icon: "code" },
+    { key: "image", label: itemLabels.image, icon: "image" },
+    {
+      key: "horizontalRule",
+      label: itemLabels.horizontalRule,
+      icon: "horizontal_rule",
+    },
+  ];
+}
+
+// Fallback constants pour la rétrocompatibilité
 export const TOOLBAR_ITEMS: ConfigItem[] = [
   { key: "bold", label: "Gras", icon: "format_bold" },
   { key: "italic", label: "Italique", icon: "format_italic" },

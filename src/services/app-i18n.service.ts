@@ -160,6 +160,35 @@ export interface AppTranslations {
     commandImplementation: string;
     implementImageUpload: string;
   };
+
+  // Labels des items d'éditeur
+  items: {
+    // Toolbar items
+    bold: string;
+    italic: string;
+    underline: string;
+    strike: string;
+    code: string;
+    superscript: string;
+    subscript: string;
+    highlight: string;
+    heading1: string;
+    heading2: string;
+    heading3: string;
+    bulletList: string;
+    orderedList: string;
+    blockquote: string;
+    alignLeft: string;
+    alignCenter: string;
+    alignRight: string;
+    alignJustify: string;
+    link: string;
+    image: string;
+    horizontalRule: string;
+    undo: string;
+    redo: string;
+    separator: string;
+  };
 }
 
 const ENGLISH_APP_TRANSLATIONS: AppTranslations = {
@@ -305,6 +334,33 @@ const ENGLISH_APP_TRANSLATIONS: AppTranslations = {
     contentChangedLog: "Content changed:",
     commandImplementation: "Implementation for",
     implementImageUpload: "Implement image upload",
+  },
+
+  items: {
+    bold: "Bold",
+    italic: "Italic",
+    underline: "Underline",
+    strike: "Strikethrough",
+    code: "Code",
+    superscript: "Superscript",
+    subscript: "Subscript",
+    highlight: "Highlight",
+    heading1: "Heading 1",
+    heading2: "Heading 2",
+    heading3: "Heading 3",
+    bulletList: "Bullet List",
+    orderedList: "Ordered List",
+    blockquote: "Blockquote",
+    alignLeft: "Align Left",
+    alignCenter: "Align Center",
+    alignRight: "Align Right",
+    alignJustify: "Justify",
+    link: "Link",
+    image: "Image",
+    horizontalRule: "Horizontal Rule",
+    undo: "Undo",
+    redo: "Redo",
+    separator: "Separator",
   },
 };
 
@@ -453,6 +509,33 @@ const FRENCH_APP_TRANSLATIONS: AppTranslations = {
     commandImplementation: "Implémentation pour",
     implementImageUpload: "Implémenter l'upload d'image",
   },
+
+  items: {
+    bold: "Gras",
+    italic: "Italique",
+    underline: "Souligné",
+    strike: "Barré",
+    code: "Code",
+    superscript: "Exposant",
+    subscript: "Indice",
+    highlight: "Surligner",
+    heading1: "Titre 1",
+    heading2: "Titre 2",
+    heading3: "Titre 3",
+    bulletList: "Liste à puces",
+    orderedList: "Liste numérotée",
+    blockquote: "Citation",
+    alignLeft: "Aligner à gauche",
+    alignCenter: "Centrer",
+    alignRight: "Aligner à droite",
+    alignJustify: "Justifier",
+    link: "Lien",
+    image: "Image",
+    horizontalRule: "Ligne horizontale",
+    undo: "Annuler",
+    redo: "Refaire",
+    separator: "Séparateur",
+  },
 };
 
 @Injectable({
@@ -482,6 +565,7 @@ export class AppI18nService {
   readonly status = computed(() => this.translations().status);
   readonly demoContent = computed(() => this.translations().demoContent);
   readonly codeGeneration = computed(() => this.translations().codeGeneration);
+  readonly items = computed(() => this.translations().items);
 
   constructor() {
     // Synchronisation avec le service Tiptap
@@ -568,7 +652,7 @@ export class AppI18nService {
   <li>${content.customizationItems.bubbleMenu} • ${content.customizationItems.slashCommands}</li>
 </ul>
 
-<p><strong>${content.conclusion}</strong></p>
+<p style="text-align: right;"><strong>${content.conclusion}</strong></p>
 `.trim();
   }
 }
