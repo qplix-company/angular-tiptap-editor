@@ -1,5 +1,28 @@
 {
-  "name": "angular-starter",
+  "name": "tiptap-editor-project",
+  "version": "1.0.0",
+  "description": "Projet Angular contenant la bibliothèque TiptapEditor et sa démo interactive",
+  "keywords": [
+    "angular",
+    "tiptap",
+    "editor",
+    "rich-text",
+    "wysiwyg",
+    "demo",
+    "typescript",
+    "i18n",
+    "internationalization"
+  ],
+  "author": "FloGeez",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/flogeez/tiptap-editor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/flogeez/tiptap-editor/issues"
+  },
+  "homepage": "https://github.com/flogeez/tiptap-editor#readme",
   "private": true,
   "scripts": {
     "ng": "ng",

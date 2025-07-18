@@ -19,7 +19,10 @@ export type {
   SlashCommandItem,
 } from "./lib/tiptap-slash-commands.component";
 
-// Default configuration for slash commands
+// Default configurations
+export { DEFAULT_TOOLBAR_CONFIG } from "./lib/tiptap-editor.component";
+export { DEFAULT_BUBBLE_MENU_CONFIG } from "./lib/tiptap-editor.component";
+export { DEFAULT_IMAGE_BUBBLE_MENU_CONFIG } from "./lib/tiptap-editor.component";
 export { DEFAULT_SLASH_COMMANDS } from "./lib/tiptap-slash-commands.component";
 
 // Utility function to create internationalized slash commands
@@ -31,3 +34,6 @@ export type HeightConfig = {
   height?: number;
   maxHeight?: number;
 };
+
+// Supported locales type
+export type { SupportedLocale } from "./lib/services/i18n.service";
