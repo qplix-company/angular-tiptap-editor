@@ -13,12 +13,17 @@ export interface EditorState {
   enableSlashCommands: boolean;
   placeholder: string;
   locale?: string;
+  // Height configuration
+  minHeight: number;
+  height?: number;
+  maxHeight?: number;
 }
 
 export interface MenuState {
   showToolbarMenu: boolean;
   showBubbleMenuMenu: boolean;
   showSlashCommandsMenu: boolean;
+  showHeightMenu: boolean;
 }
 
 export interface EditorContent {

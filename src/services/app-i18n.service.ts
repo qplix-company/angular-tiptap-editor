@@ -28,6 +28,8 @@ export interface AppTranslations {
     toolbar: string;
     bubbleMenu: string;
     slashCommands: string;
+    height: string;
+    heightSettings: string;
     language: string;
     editorLanguage: string;
     showToolbar: string;
@@ -54,6 +56,7 @@ export interface AppTranslations {
     copiedToClipboard: string;
     errorCopying: string;
     unsupportedBrowser: string;
+    heightConfigInfo: string;
   };
 
   // Tooltips
@@ -188,6 +191,10 @@ export interface AppTranslations {
     undo: string;
     redo: string;
     separator: string;
+
+    // Height configuration
+    fixedHeight: string;
+    maxHeight: string;
   };
 }
 
@@ -215,6 +222,8 @@ const ENGLISH_APP_TRANSLATIONS: AppTranslations = {
     toolbar: "Toolbar",
     bubbleMenu: "Bubble Menu",
     slashCommands: "Slash Commands",
+    height: "Height",
+    heightSettings: "Height settings",
     language: "Language",
     editorLanguage: "Editor language",
     showToolbar: "Show toolbar",
@@ -239,6 +248,8 @@ const ENGLISH_APP_TRANSLATIONS: AppTranslations = {
     copiedToClipboard: "Copied to clipboard",
     errorCopying: "Error copying to clipboard",
     unsupportedBrowser: "Clipboard not supported in this browser",
+    heightConfigInfo:
+      "Scroll is automatically calculated when a height is defined",
   },
   tooltips: {
     toggleSidebar: "Toggle configuration panel",
@@ -361,6 +372,10 @@ const ENGLISH_APP_TRANSLATIONS: AppTranslations = {
     undo: "Undo",
     redo: "Redo",
     separator: "Separator",
+
+    // Height configuration
+    fixedHeight: "Fixed height",
+    maxHeight: "Max height",
   },
 };
 
@@ -388,6 +403,8 @@ const FRENCH_APP_TRANSLATIONS: AppTranslations = {
     toolbar: "Barre d'outils",
     bubbleMenu: "Menu contextuel",
     slashCommands: "Commandes slash",
+    height: "Hauteur",
+    heightSettings: "Paramètres de hauteur",
     language: "Langue",
     editorLanguage: "Langue de l'éditeur",
     showToolbar: "Afficher la barre d'outils",
@@ -412,6 +429,8 @@ const FRENCH_APP_TRANSLATIONS: AppTranslations = {
     copiedToClipboard: "Copié dans le presse-papiers",
     errorCopying: "Erreur lors de la copie",
     unsupportedBrowser: "Presse-papiers non pris en charge dans ce navigateur",
+    heightConfigInfo:
+      "Le scroll se calcule automatiquement quand une hauteur est définie",
   },
   tooltips: {
     toggleSidebar: "Basculer le panneau de configuration",
@@ -535,6 +554,10 @@ const FRENCH_APP_TRANSLATIONS: AppTranslations = {
     undo: "Annuler",
     redo: "Refaire",
     separator: "Séparateur",
+
+    // Height configuration
+    fixedHeight: "Hauteur fixe",
+    maxHeight: "Hauteur maximale",
   },
 };
 

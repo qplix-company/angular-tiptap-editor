@@ -205,6 +205,9 @@ export const DEFAULT_IMAGE_BUBBLE_MENU_CONFIG: ImageBubbleMenuConfig = {
       .tiptap-content {
         padding: 16px;
         min-height: var(--editor-min-height, 200px);
+        height: var(--editor-height, auto);
+        max-height: var(--editor-max-height, none);
+        overflow-y: var(--editor-overflow, visible);
         outline: none;
         position: relative;
       }
@@ -237,6 +240,9 @@ export const DEFAULT_IMAGE_BUBBLE_MENU_CONFIG: ImageBubbleMenuConfig = {
         color: #2d3748;
         min-height: 100%;
         height: 100%;
+        /* S'assurer que le contenu s'étend correctement dans un conteneur scrollable */
+        word-wrap: break-word;
+        overflow-wrap: break-word;
       }
 
       /* Titres */
@@ -587,6 +593,8 @@ export class TiptapEditorComponent
   placeholder = input<string>("");
   editable = input<boolean>(true);
   minHeight = input<number>(200);
+  height = input<number | undefined>(undefined);
+  maxHeight = input<number | undefined>(undefined);
   showToolbar = input<boolean>(true);
   showCharacterCount = input<boolean>(true);
   maxCharacters = input<number | undefined>(undefined);
@@ -720,12 +728,30 @@ export class TiptapEditorComponent
       }
     });
 
-    // Effet pour mettre à jour la hauteur minimale
+    // Effet pour mettre à jour les propriétés de hauteur
     effect(() => {
       const minHeight = this.minHeight();
+      const height = this.height();
+      const maxHeight = this.maxHeight();
       const element = this.editorElement()?.nativeElement;
+
+      // Calculer automatiquement si le scroll est nécessaire
+      const needsScroll = height !== undefined || maxHeight !== undefined;
+
       if (element) {
         element.style.setProperty("--editor-min-height", `${minHeight}px`);
+        element.style.setProperty(
+          "--editor-height",
+          height ? `${height}px` : "auto"
+        );
+        element.style.setProperty(
+          "--editor-max-height",
+          maxHeight ? `${maxHeight}px` : "none"
+        );
+        element.style.setProperty(
+          "--editor-overflow",
+          needsScroll ? "auto" : "visible"
+        );
       }
     });
 

@@ -188,6 +188,11 @@ export const SLASH_COMMAND_ITEMS: ConfigItem[] = [
   },
 ];
 
+export const HEIGHT_ITEMS: ConfigItem[] = [
+  { key: "fixedHeight", label: "Hauteur fixe", icon: "height" },
+  { key: "maxHeight", label: "Hauteur maximale", icon: "vertical_align_top" },
+];
+
 export const DEFAULT_DEMO_CONTENT = `
 <h1>Guide Complet de l'Éditeur Tiptap</h1>
 <p>Découvrez toutes les fonctionnalités de cet éditeur de texte <strong>moderne</strong> et <em>puissant</em> pour Angular.</p>

@@ -422,6 +422,24 @@ export class TiptapSlashCommandsComponent implements OnInit, OnDestroy {
       offset: [0, 8],
       hideOnClick: true,
       getReferenceClientRect: () => this.getSlashRect(),
+      // Améliorer le positionnement avec scroll
+      popperOptions: {
+        modifiers: [
+          {
+            name: "preventOverflow",
+            options: {
+              boundary: "viewport",
+              padding: 8,
+            },
+          },
+          {
+            name: "flip",
+            options: {
+              fallbackPlacements: ["top-start", "bottom-end", "top-end"],
+            },
+          },
+        ],
+      },
     });
 
     // Maintenant que Tippy est initialisé, faire un premier check

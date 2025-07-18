@@ -24,3 +24,10 @@ export { DEFAULT_SLASH_COMMANDS } from "./lib/tiptap-slash-commands.component";
 
 // Utility function to create internationalized slash commands
 export { createI18nSlashCommands } from "./lib/config/i18n-slash-commands";
+
+// Types for height configuration
+export type HeightConfig = {
+  minHeight?: number;
+  height?: number;
+  maxHeight?: number;
+};

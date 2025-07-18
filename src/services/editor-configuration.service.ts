@@ -25,6 +25,10 @@ export class EditorConfigurationService {
     showBubbleMenu: true,
     enableSlashCommands: true,
     placeholder: "Start typing...", // Will be updated by the effect
+    // Height configuration
+    minHeight: 200,
+    height: undefined,
+    maxHeight: undefined,
   });
 
   // Menu state
@@ -32,6 +36,7 @@ export class EditorConfigurationService {
     showToolbarMenu: false,
     showBubbleMenuMenu: false,
     showSlashCommandsMenu: false,
+    showHeightMenu: false,
   });
 
   // Editor content
@@ -196,12 +201,58 @@ export class EditorConfigurationService {
     return this._activeSlashCommands().has(key);
   }
 
+  // Height configuration methods
+  toggleHeightItem(key: string) {
+    const currentState = this._editorState();
+
+    switch (key) {
+      case "enableScroll":
+        // Activer le scroll en définissant une hauteur max par défaut
+        this._editorState.update((state) => ({
+          ...state,
+          maxHeight: state.maxHeight ? undefined : 400,
+        }));
+        break;
+      case "fixedHeight":
+        // Toggle between fixed height and auto
+        this._editorState.update((state) => ({
+          ...state,
+          height: state.height ? undefined : 300,
+        }));
+        break;
+      case "maxHeight":
+        // Toggle between max height and none
+        this._editorState.update((state) => ({
+          ...state,
+          maxHeight: state.maxHeight ? undefined : 400,
+        }));
+        break;
+    }
+  }
+
+  isHeightItemActive(key: string): boolean {
+    const state = this._editorState();
+
+    switch (key) {
+      case "enableScroll":
+        // Le scroll est actif si on a une hauteur ou hauteur max
+        return state.height !== undefined || state.maxHeight !== undefined;
+      case "fixedHeight":
+        return state.height !== undefined;
+      case "maxHeight":
+        return state.maxHeight !== undefined;
+      default:
+        return false;
+    }
+  }
+
   // Menu closing methods
   closeAllMenus() {
     this._menuState.set({
       showToolbarMenu: false,
       showBubbleMenuMenu: false,
       showSlashCommandsMenu: false,
+      showHeightMenu: false,
     });
   }
 

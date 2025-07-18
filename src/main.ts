@@ -56,6 +56,9 @@ import { CodeGeneratorService } from "./services/code-generator.service";
                 [slashCommandsConfig]="slashCommandsConfig()"
                 [showToolbar]="editorState().showToolbar"
                 [placeholder]="editorState().placeholder"
+                [minHeight]="editorState().minHeight"
+                [height]="editorState().height"
+                [maxHeight]="editorState().maxHeight"
                 (contentChange)="onContentChange($event)"
               >
               </tiptap-editor>
