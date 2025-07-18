@@ -153,7 +153,7 @@ export class App {
   readonly slashCommandsConfig = this.configService.slashCommandsConfig;
   readonly currentLocale = this.i18nService.currentLocale;
 
-  // Méthode pour gérer les changements de contenu
+  // Method to handle content changes
   onContentChange(content: string) {
     this.configService.updateDemoContent(content);
   }

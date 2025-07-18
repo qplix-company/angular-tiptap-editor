@@ -2,7 +2,7 @@ import { Injectable, signal, computed, inject, effect } from "@angular/core";
 import { TiptapI18nService, SupportedLocale } from "tiptap-editor";
 
 export interface AppTranslations {
-  // Interface générale
+  // General interface
   ui: {
     configuration: string;
     close: string;
@@ -99,7 +99,7 @@ export interface AppTranslations {
     switching: string;
   };
 
-  // Contenu de démo
+  // Demo content
   demoContent: {
     title: string;
     subtitle: string;
@@ -136,32 +136,32 @@ export interface AppTranslations {
     conclusion: string;
   };
 
-  // Code généré - Commentaires et noms de variables
+  // Generated code - Comments and variable names
   codeGeneration: {
-    // Commentaires généraux
+    // General comments
     demoContentComment: string;
     toolbarConfigComment: string;
     bubbleMenuConfigComment: string;
     slashCommandsConfigComment: string;
     onContentChangeComment: string;
 
-    // Noms de variables
+    // Variable names
     demoContentVar: string;
     toolbarConfigVar: string;
     bubbleMenuConfigVar: string;
     slashCommandsConfigVar: string;
     onContentChangeVar: string;
 
-    // Contenu du placeholder
+    // Placeholder content
     placeholderContent: string;
 
-    // Logs et messages
+    // Logs and messages
     contentChangedLog: string;
     commandImplementation: string;
     implementImageUpload: string;
   };
 
-  // Labels des items d'éditeur
+  // Editor item labels
   items: {
     // Toolbar items
     bold: string;

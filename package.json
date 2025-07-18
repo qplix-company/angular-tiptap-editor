@@ -4,7 +4,10 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build"
+    "build": "ng build",
+    "build:lib": "ng build tiptap-editor",
+    "watch:lib": "ng build tiptap-editor --watch",
+    "dev": "concurrently \"npm run watch:lib\" \"wait-on dist/tiptap-editor && npm run start\""
   },
   "dependencies": {
     "@angular/animations": "^20.0.0",
@@ -21,17 +24,17 @@
     "@tiptap/core": "^2.1.13",
     "@tiptap/extension-bubble-menu": "^2.23.1",
     "@tiptap/extension-character-count": "^2.1.13",
+    "@tiptap/extension-highlight": "^2.1.13",
     "@tiptap/extension-image": "^2.1.13",
+    "@tiptap/extension-link": "^2.1.13",
     "@tiptap/extension-placeholder": "^2.1.13",
+    "@tiptap/extension-subscript": "^2.1.13",
+    "@tiptap/extension-superscript": "^2.1.13",
+    "@tiptap/extension-text-align": "^2.1.13",
+    "@tiptap/extension-underline": "^2.1.13",
     "@tiptap/pm": "^2.1.13",
     "@tiptap/starter-kit": "^2.1.13",
     "@tiptap/suggestion": "^2.1.13",
-    "@tiptap/extension-underline": "^2.1.13",
-    "@tiptap/extension-superscript": "^2.1.13",
-    "@tiptap/extension-subscript": "^2.1.13",
-    "@tiptap/extension-text-align": "^2.1.13",
-    "@tiptap/extension-link": "^2.1.13",
-    "@tiptap/extension-highlight": "^2.1.13",
     "rxjs": "^7.8.1",
     "tslib": "^2.5.0",
     "zone.js": "~0.15.0"
@@ -40,7 +43,9 @@
     "@angular/build": "^20.0.0",
     "@angular/cli": "^20.0.0",
     "@angular/compiler-cli": "^20.0.0",
+    "concurrently": "^9.2.0",
     "ng-packagr": "^20.0.0",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.2",
+    "wait-on": "^8.0.3"
   }
 }

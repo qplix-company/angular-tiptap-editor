@@ -29,14 +29,14 @@
             "assets": [],
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "outputPath": "dist/demo",
+            "outputPath": "demo-dist",
             "polyfills": [
               "zone.js"
             ],
             "scripts": [],
             "styles": [
               "node_modules/@fontsource/material-symbols-outlined/index.css",
-              "dist/tiptap-editor/src/lib/styles/index.css",
+              "projects/tiptap-editor/src/lib/styles/index.css",
               "src/global_styles.css"
             ],
             "tsConfig": "tsconfig.app.json"

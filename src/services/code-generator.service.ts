@@ -9,7 +9,7 @@ import {
 import { ConfigItem } from "../types/editor-config.types";
 import { EditorConfigurationService } from "./editor-configuration.service";
 
-// Valeurs par défaut de la librairie (copiées depuis tiptap-editor.component.ts)
+// Default library values (copied from tiptap-editor.component.ts)
 const DEFAULT_TOOLBAR_CONFIG = {
   bold: true,
   italic: true,
@@ -66,7 +66,7 @@ export class CodeGeneratorService {
     const currentLocale = this.i18nService.currentLocale();
     const codeGen = this.appI18nService.codeGeneration();
 
-    // Détecter les fonctionnalités activées et si elles diffèrent des valeurs par défaut
+    // Detect enabled features and if they differ from default values
     const hasActiveToolbar = this.hasActiveItems(toolbarConfig, TOOLBAR_ITEMS);
     const hasActiveBubbleMenu = this.hasActiveItems(
       bubbleMenuConfig,
@@ -79,7 +79,7 @@ export class CodeGeneratorService {
     const isSlashCommandsDefault =
       this.isSlashCommandsDefault(activeSlashCommands);
 
-    // Générer l'input locale si une langue spécifique est sélectionnée
+    // Generate locale input if a specific language is selected
     const localeInput = currentLocale
       ? `\n      [locale]="${currentLocale}"`
       : "";
@@ -136,7 +136,7 @@ export class TiptapDemoComponent {
   }
 
   private isToolbarDefault(config: Record<string, boolean>): boolean {
-    // Comparer avec les valeurs par défaut pour tous les éléments
+    // Compare with default values for all elements
     const allKeys = Object.keys(DEFAULT_TOOLBAR_CONFIG);
 
     return allKeys.every((key) => {
@@ -149,7 +149,7 @@ export class TiptapDemoComponent {
   }
 
   private isBubbleMenuDefault(config: Record<string, boolean>): boolean {
-    // Comparer avec les valeurs par défaut pour tous les éléments
+    // Compare with default values for all elements
     const allKeys = Object.keys(DEFAULT_BUBBLE_MENU_CONFIG);
 
     return allKeys.every((key) => {
@@ -163,8 +163,8 @@ export class TiptapDemoComponent {
   }
 
   private isSlashCommandsDefault(activeCommands: Set<string>): boolean {
-    // Pour les slash commands, on considère qu'ils sont par défaut si on utilise DEFAULT_SLASH_COMMANDS
-    // Pour l'instant, on considère qu'ils sont par défaut si toutes les commandes de base sont présentes
+    // For slash commands, we consider them default if using DEFAULT_SLASH_COMMANDS
+    // For now, we consider them default if all basic commands are present
     const defaultCommands = [
       "heading1",
       "heading2",
@@ -194,7 +194,7 @@ export class TiptapDemoComponent {
       "import { TiptapEditorComponent } from 'tiptap-editor';",
     ];
 
-    // Ajouter les imports conditionnels selon les fonctionnalités utilisées
+    // Add conditional imports based on used features
     if (hasToolbar || hasBubbleMenu || hasSlashCommands) {
       imports.push("import { DEFAULT_SLASH_COMMANDS } from 'tiptap-editor';");
     }
@@ -216,7 +216,7 @@ ${imports.join("\n")}`;
       `[content]="${this.appI18nService.codeGeneration().demoContentVar}"`,
     ];
 
-    // Ajouter les props conditionnelles seulement si la config diffère des valeurs par défaut
+    // Add conditional props only if config differs from default values
     if (hasToolbar) {
       templateProps.push(
         `[toolbar]="${this.appI18nService.codeGeneration().toolbarConfigVar}"`
@@ -231,7 +231,7 @@ ${imports.join("\n")}`;
       );
     }
 
-    // Props toujours présentes
+    // Always present props
     templateProps.push(
       `[showBubbleMenu]="${editorState.showBubbleMenu}"`,
       `[enableSlashCommands]="${editorState.enableSlashCommands}"`,
@@ -242,7 +242,7 @@ ${imports.join("\n")}`;
       }($event)"`
     );
 
-    // Ajouter slashCommandsConfig seulement si des commandes sont actives ET différentes des valeurs par défaut
+    // Add slashCommandsConfig only if commands are active AND different from default values
     if (hasSlashCommands) {
       templateProps.splice(
         4,
@@ -253,7 +253,7 @@ ${imports.join("\n")}`;
       );
     }
 
-    // Ajouter locale si spécifié
+    // Add locale if specified
     if (localeInput) {
       templateProps.splice(1, 0, localeInput.trim());
     }
@@ -348,7 +348,7 @@ ${this.generateCompleteSlashCommandsConfig(activeSlashCommands)}
     const slashTranslations = this.i18nService.slashCommands();
     const currentLocale = this.i18nService.currentLocale();
 
-    // Mapping des clés vers les traductions avec accès sécurisé
+    // Mapping keys to translations with safe access
     const getTranslation = (key: string) => {
       const translations: any = slashTranslations;
       return translations[key] || { title: key, description: "", keywords: [] };
@@ -406,7 +406,7 @@ ${this.generateCompleteSlashCommandsConfig(activeSlashCommands)}
     );
   }
 
-  // Copier le code dans le presse-papiers
+  // Copy code to clipboard
   async copyCode(): Promise<void> {
     try {
       const code = this.generateCode();
@@ -425,9 +425,9 @@ ${this.generateCompleteSlashCommandsConfig(activeSlashCommands)}
     }
   }
 
-  // Méthode pour colorer le code (placeholder pour l'instant)
+  // Method to highlight code (placeholder for now)
   highlightCode(code: string): string {
-    // Retourner le code brut sans coloration pour éviter les problèmes d'affichage
+    // Return raw code without highlighting to avoid display issues
     return code;
   }
 }

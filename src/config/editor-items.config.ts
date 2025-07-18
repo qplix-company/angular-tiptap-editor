@@ -1,6 +1,6 @@
 import { ConfigItem } from "../types/editor-config.types";
 
-// Factory functions pour créer les items avec les traductions
+// Factory functions to create items with translations
 export function createToolbarItems(itemLabels: any): ConfigItem[] {
   return [
     { key: "bold", label: itemLabels["bold"], icon: "format_bold" },
@@ -119,7 +119,7 @@ export function createSlashCommandItems(itemLabels: any): ConfigItem[] {
   ];
 }
 
-// Fallback constants pour la rétrocompatibilité
+// Fallback constants for backward compatibility
 export const TOOLBAR_ITEMS: ConfigItem[] = [
   { key: "bold", label: "Gras", icon: "format_bold" },
   { key: "italic", label: "Italique", icon: "format_italic" },

@@ -16,7 +16,7 @@ import { AppI18nService } from "./app-i18n.service";
 export class EditorConfigurationService {
   private i18nService = inject(TiptapI18nService);
   private appI18nService = inject(AppI18nService);
-  // État de l'éditeur
+  // Editor state
   private _editorState = signal<EditorState>({
     showSidebar: true,
     showCodeMode: false,
@@ -24,17 +24,17 @@ export class EditorConfigurationService {
     showToolbar: true,
     showBubbleMenu: true,
     enableSlashCommands: true,
-    placeholder: "Start typing...", // Sera mis à jour par l'effect
+    placeholder: "Start typing...", // Will be updated by the effect
   });
 
-  // État des menus
+  // Menu state
   private _menuState = signal<MenuState>({
     showToolbarMenu: false,
     showBubbleMenuMenu: false,
     showSlashCommandsMenu: false,
   });
 
-  // Contenu de l'éditeur
+  // Editor content
   private _demoContent = signal("<p></p>");
 
   // Configurations
@@ -119,15 +119,15 @@ export class EditorConfigurationService {
   });
 
   constructor() {
-    // Mettre à jour le contenu et les slash commands quand la langue change
+    // Update content and slash commands when language changes
     effect(() => {
-      // Re-trigger quand la langue change
+      // Re-trigger when language changes
       this.i18nService.currentLocale();
       this.updateSlashCommandsConfig();
       this.initializeDemoContent();
     });
 
-    // Mettre à jour le placeholder de l'éditeur selon la langue
+    // Update editor placeholder based on language
     effect(() => {
       const editorTranslations = this.i18nService.editor();
       this._editorState.update((state) => ({
@@ -140,7 +140,7 @@ export class EditorConfigurationService {
     this.initializeDemoContent();
   }
 
-  // Méthodes pour l'état de l'éditeur
+  // Methods for editor state
   updateEditorState(partialState: Partial<EditorState>) {
     this._editorState.update((state) => ({ ...state, ...partialState }));
   }
@@ -153,7 +153,7 @@ export class EditorConfigurationService {
     this._demoContent.set(content);
   }
 
-  // Méthodes pour les configurations
+  // Methods for configurations
   toggleToolbarItem(key: string) {
     this._toolbarConfig.update((config) => ({
       ...config,
@@ -181,7 +181,7 @@ export class EditorConfigurationService {
     this.updateSlashCommandsConfig();
   }
 
-  // Méthodes de vérification
+  // Verification methods
   isToolbarItemActive(key: string): boolean {
     const config = this._toolbarConfig();
     return !!(config as any)[key];
@@ -196,7 +196,7 @@ export class EditorConfigurationService {
     return this._activeSlashCommands().has(key);
   }
 
-  // Méthodes de fermeture des menus
+  // Menu closing methods
   closeAllMenus() {
     this._menuState.set({
       showToolbarMenu: false,
@@ -205,7 +205,7 @@ export class EditorConfigurationService {
     });
   }
 
-  // Réinitialiser aux valeurs par défaut
+  // Reset to default values
   resetToDefaults() {
     this._toolbarConfig.set({
       bold: true,
@@ -280,7 +280,7 @@ export class EditorConfigurationService {
     const activeCommands = this._activeSlashCommands();
     const allI18nCommands = createI18nSlashCommands(this.i18nService);
 
-    // Map des titres vers les clés pour la compatibilité
+    // Map titles to keys for compatibility
     const commandKeyMap = new Map<string, string>([
       ["heading1", "heading1"],
       ["heading2", "heading2"],
@@ -293,19 +293,21 @@ export class EditorConfigurationService {
       ["horizontalRule", "horizontalRule"],
     ]);
 
-    const filteredCommands = allI18nCommands.filter((command, index) => {
-      // Utiliser l'index pour déterminer la clé de commande
-      const commandKeys = Array.from(commandKeyMap.keys());
-      const commandKey = commandKeys[index];
-      return commandKey && activeCommands.has(commandKey);
-    });
+    const filteredCommands = allI18nCommands.filter(
+      (command: any, index: number) => {
+        // Use index to determine command key
+        const commandKeys = Array.from(commandKeyMap.keys());
+        const commandKey = commandKeys[index];
+        return commandKey && activeCommands.has(commandKey);
+      }
+    );
 
     this._slashCommandsConfig.set({
       commands: filteredCommands,
     });
   }
 
-  // Initialiser le contenu de démo avec les traductions
+  // Initialize demo content with translations
   private initializeDemoContent() {
     const translatedContent = this.appI18nService.generateDemoContent();
     this._demoContent.set(translatedContent);

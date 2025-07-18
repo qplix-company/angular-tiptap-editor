@@ -2,13 +2,13 @@
  * Public API Surface of tiptap-editor
  */
 
-// Composant principal - seul composant exposé publiquement
+// Main component - only public component
 export * from "./lib/tiptap-editor.component";
 
-// Service d'internationalisation
+// Internationalization service
 export * from "./lib/services/i18n.service";
 
-// Types et interfaces pour la configuration
+// Types and interfaces for configuration
 export type { ToolbarConfig } from "./lib/toolbar.component";
 export type {
   BubbleMenuConfig,
@@ -19,5 +19,8 @@ export type {
   SlashCommandItem,
 } from "./lib/tiptap-slash-commands.component";
 
-// Configuration par défaut des slash commands
+// Default configuration for slash commands
 export { DEFAULT_SLASH_COMMANDS } from "./lib/tiptap-slash-commands.component";
+
+// Utility function to create internationalized slash commands
+export { createI18nSlashCommands } from "./lib/config/i18n-slash-commands";

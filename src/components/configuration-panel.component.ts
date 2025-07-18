@@ -501,7 +501,7 @@ export class ConfigurationPanelComponent {
           return;
         }
 
-        // Vérifier si le clic est à l'intérieur d'un menu ouvert
+        // Check if click is inside an open menu
         const menuSections = appElement.querySelectorAll(".dropdown-section");
         let isInsideAnyMenu = false;
 
@@ -511,7 +511,7 @@ export class ConfigurationPanelComponent {
           }
         });
 
-        // Si le clic est à l'extérieur de tous les menus, les fermer
+        // If click is outside all menus, close them
         if (!isInsideAnyMenu) {
           this.configService.closeAllMenus();
         }
@@ -525,12 +525,12 @@ export class ConfigurationPanelComponent {
       };
     });
 
-    // Effect pour démarrer automatiquement l'animation d'expansion
+    // Effect to automatically start expansion animation
     effect(() => {
       const isTransitioning = this.editorState().isTransitioning;
 
       if (isTransitioning) {
-        // Démarrer l'animation après un court délai
+        // Start animation after a short delay
         setTimeout(() => {
           const transitionElement = this.elementRef.nativeElement.querySelector(
             ".transition-element"
@@ -543,7 +543,7 @@ export class ConfigurationPanelComponent {
     });
   }
 
-  // Méthodes pour la toolbar
+  // Methods for toolbar
   toggleToolbar() {
     this.configService.updateEditorState({
       showToolbar: !this.editorState().showToolbar,
@@ -566,7 +566,7 @@ export class ConfigurationPanelComponent {
     return this.configService.isToolbarItemActive(key);
   }
 
-  // Méthodes pour le bubble menu
+  // Methods for bubble menu
   toggleBubbleMenu() {
     this.configService.updateEditorState({
       showBubbleMenu: !this.editorState().showBubbleMenu,
@@ -589,7 +589,7 @@ export class ConfigurationPanelComponent {
     return this.configService.isBubbleMenuItemActive(key);
   }
 
-  // Méthodes pour les slash commands
+  // Methods for slash commands
   toggleSlashCommands() {
     this.configService.updateEditorState({
       enableSlashCommands: !this.editorState().enableSlashCommands,
@@ -612,7 +612,7 @@ export class ConfigurationPanelComponent {
     return this.configService.isSlashCommandActive(key);
   }
 
-  // Méthodes générales
+  // General methods
   toggleSidebar() {
     const currentState = this.editorState().showSidebar;
 
@@ -623,7 +623,7 @@ export class ConfigurationPanelComponent {
       // Ouverture avec animation de transformation
       this.configService.updateEditorState({ isTransitioning: true });
 
-      // Après l'animation, remplacer directement par le sidebar
+      // After animation, replace directly with sidebar
       setTimeout(() => {
         this.configService.updateEditorState({
           isTransitioning: false,
