@@ -6,13 +6,5 @@
   },
   "assets": [
     "src/lib/styles"
-  ],
-  "allowedNonPeerDependencies": [
-    "@tiptap/core",
-    "@tiptap/starter-kit",
-    "@tiptap/extension-placeholder",
-    "@tiptap/extension-character-count",
-    "@tiptap/extension-bubble-menu",
-    "@intevation/tiptap-extension-office-paste"
   ]
 }

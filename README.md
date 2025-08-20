@@ -27,6 +27,7 @@ Add the required CSS to your `angular.json` file in the `styles` array:
 {
   "styles": [
     ...
+    "node_modules/@fontsource/material-symbols-outlined/index.css",
     "node_modules/@flogeez/angular-tiptap-editor/src/lib/styles/index.css",
     ...
   ]
