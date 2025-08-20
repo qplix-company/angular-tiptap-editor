@@ -314,17 +314,12 @@ export const DEFAULT_IMAGE_BUBBLE_MENU_CONFIG: ImageBubbleMenuConfig = {
       }
 
       /* Placeholder */
-      :host ::ng-deep .ProseMirror .placeholder {
+      :host ::ng-deep .ProseMirror p.is-editor-empty:first-child::before {
+        content: attr(data-placeholder);
         color: #a0aec0;
         pointer-events: none;
-        height: 0;
-      }
-
-      :host ::ng-deep .ProseMirror .placeholder::before {
-        content: attr(data-placeholder);
         float: left;
         height: 0;
-        pointer-events: none;
       }
 
       /* Mode lecture seule */
