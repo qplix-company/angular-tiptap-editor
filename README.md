@@ -2,6 +2,8 @@
 
 A modern, customizable rich-text editor for Angular applications, built with Tiptap and featuring complete internationalization support.
 
+[![Try it on StackBlitz](https://img.shields.io/badge/Try%20it-StackBlitz-blue?style=for-the-badge&logo=stackblitz)](https://stackblitz.com/edit/angular-tiptap-editor)
+
 ## 🚀 Features
 
 - **Modern Angular**: Built with Angular 19+ and standalone components
