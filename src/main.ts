@@ -3,7 +3,10 @@ import { bootstrapApplication } from "@angular/platform-browser";
 import { CommonModule } from "@angular/common";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
-import { TiptapEditorComponent, TiptapI18nService } from "tiptap-editor";
+import {
+  TiptapEditorComponent,
+  TiptapI18nService,
+} from "@flogeez/ngx-tiptap-editor";
 import { MAT_ICON_DEFAULT_OPTIONS } from "@angular/material/icon";
 
 // Import des composants

@@ -1,5 +1,5 @@
 import { Injectable, inject } from "@angular/core";
-import { TiptapI18nService } from "tiptap-editor";
+import { TiptapI18nService } from "@flogeez/ngx-tiptap-editor";
 import { AppI18nService } from "./app-i18n.service";
 import {
   TOOLBAR_ITEMS,

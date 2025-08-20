@@ -16,7 +16,21 @@ A modern, customizable rich-text editor for Angular applications, built with Tip
 ## 📦 Installation
 
 ```bash
-npm install ngx-tiptap-editor
+npm install @flogeez/ngx-tiptap-editor
+```
+
+### CSS Styles
+
+Add the required CSS to your `angular.json` file in the `styles` array:
+
+```json
+{
+  "styles": [
+    ...
+    "node_modules/@flogeez/ngx-tiptap-editor/src/lib/styles/index.css",
+    ...
+  ]
+}
 ```
 
 ## 🎯 Quick Start
@@ -25,7 +39,7 @@ npm install ngx-tiptap-editor
 
 ```typescript
 import { Component } from "@angular/core";
-import { NgxTiptapEditorComponent } from "ngx-tiptap-editor";
+import { NgxTiptapEditorComponent } from "@flogeez/ngx-tiptap-editor";
 
 @Component({
   selector: "app-example",
@@ -52,7 +66,7 @@ export class ExampleComponent {
 
 ```typescript
 import { Component } from "@angular/core";
-import { NgxTiptapEditorComponent } from "ngx-tiptap-editor";
+import { NgxTiptapEditorComponent } from "@flogeez/ngx-tiptap-editor";
 
 @Component({
   selector: "app-advanced",
@@ -103,7 +117,7 @@ export class AdvancedComponent {
 ```typescript
 import { Component } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
-import { NgxTiptapEditorComponent } from "ngx-tiptap-editor";
+import { NgxTiptapEditorComponent } from "@flogeez/ngx-tiptap-editor";
 
 @Component({
   selector: "app-form",
@@ -260,7 +274,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 - 🎮 [Live Demo](https://flogeez.github.io/ngx-tiptap-editor/)
 - 📖 [Tiptap Documentation](https://tiptap.dev/)
 - 🅰️ [Angular Documentation](https://angular.dev/)
-- 📦 [NPM Package](https://www.npmjs.com/package/ngx-tiptap-editor)
+- 📦 [NPM Package](https://www.npmjs.com/package/@flogeez/ngx-tiptap-editor)
 
 ---
 

@@ -23,16 +23,16 @@
     "url": "https://github.com/flogeez/ngx-tiptap-editor/issues"
   },
   "homepage": "https://github.com/flogeez/ngx-tiptap-editor#readme",
-  "private": true,
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "build:lib": "ng build tiptap-editor",
+    "build:lib": "ng build tiptap-editor && npm run copy-lib-assets",
     "watch:lib": "ng build tiptap-editor --watch",
     "dev": "concurrently \"npm run watch:lib\" \"wait-on dist/tiptap-editor && npm run start\"",
     "build:demo": "ng build --configuration production",
-    "build:demo:gh-pages": "ng build --configuration production --base-href /ngx-tiptap-editor/"
+    "build:demo:gh-pages": "ng build --configuration production --base-href /ngx-tiptap-editor/",
+    "copy-lib-assets": "cp README.md dist/tiptap-editor/ && cp LICENSE dist/tiptap-editor/"
   },
   "dependencies": {
     "@angular/animations": "^20.0.0",

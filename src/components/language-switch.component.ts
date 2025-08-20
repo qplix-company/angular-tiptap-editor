@@ -1,6 +1,6 @@
 import { Component, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { TiptapI18nService } from "tiptap-editor";
+import { TiptapI18nService } from "@flogeez/ngx-tiptap-editor";
 import { AppI18nService } from "../services/app-i18n.service";
 
 @Component({
