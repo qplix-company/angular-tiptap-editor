@@ -1,5 +1,5 @@
 import { Injectable, signal, computed, inject, effect } from "@angular/core";
-import { TiptapI18nService, SupportedLocale } from "@flogeez/ngx-tiptap-editor";
+import { TiptapI18nService, SupportedLocale } from "tiptap-editor";
 
 export interface AppTranslations {
   // General interface

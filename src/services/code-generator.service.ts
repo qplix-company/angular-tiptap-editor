@@ -1,10 +1,9 @@
 import { Injectable, inject } from "@angular/core";
-import { TiptapI18nService } from "@flogeez/ngx-tiptap-editor";
+import { TiptapI18nService } from "tiptap-editor";
 import { AppI18nService } from "./app-i18n.service";
 import {
   TOOLBAR_ITEMS,
   BUBBLE_MENU_ITEMS,
-  SLASH_COMMAND_ITEMS,
 } from "../config/editor-items.config";
 import { ConfigItem } from "../types/editor-config.types";
 import { EditorConfigurationService } from "./editor-configuration.service";
