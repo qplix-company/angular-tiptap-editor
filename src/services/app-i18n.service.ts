@@ -685,12 +685,10 @@ export class AppI18nService {
         : "Utilisation avec les form controls Angular :"
     }</p>
 <pre><code>// ${isEnglish ? "Component" : "Composant"}
-form = new FormGroup({
-  content: new FormControl('', [Validators.required])
-});
+content = new FormControl('', [Validators.required]);
 
 // Template
-&lt;tiptap-editor formControlName="content"&gt;&lt;/tiptap-editor&gt;</code></pre>
+&lt;angular-tiptap-editor [formControl]="content" /&gt;</code></pre>
 
 <h3>${content.customizationTitle}</h3>
 <ul>

@@ -265,16 +265,16 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 📞 Support
 
-- 🐛 [Report Issues](https://github.com/flogeez/ngx-tiptap-editor/issues)
-- 💡 [Feature Requests](https://github.com/flogeez/ngx-tiptap-editor/issues)
-- 📖 [Documentation](https://github.com/flogeez/ngx-tiptap-editor#readme)
+- 🐛 [Report Issues](https://github.com/flogeez/angular-tiptap-editor/issues)
+- 💡 [Feature Requests](https://github.com/flogeez/angular-tiptap-editor/issues)
+- 📖 [Documentation](https://github.com/flogeez/angular-tiptap-editor#readme)
 
 ## 🔗 Links
 
 - 🎮 [Live Demo](https://flogeez.github.io/angular-tiptap-editor/)
 - 📖 [Tiptap Documentation](https://tiptap.dev/)
 - 🅰️ [Angular Documentation](https://angular.dev/)
-- 📦 [NPM Package](https://www.npmjs.com/package/angular-tiptap-editor)
+- 📦 [NPM Package](https://www.npmjs.com/package/@flogeez/angular-tiptap-editor)
 
 ---
 
