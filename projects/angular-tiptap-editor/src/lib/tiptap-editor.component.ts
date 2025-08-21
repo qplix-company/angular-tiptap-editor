@@ -702,6 +702,7 @@ export class AngularTiptapEditorComponent
   // ControlValueAccessor implementation
   private onChange = (value: string) => {};
   private onTouched = () => {};
+  private pendingFormValue: string | null = null;
 
   readonly i18nService = inject(TiptapI18nService);
 
@@ -767,10 +768,8 @@ export class AngularTiptapEditorComponent
   }
 
   ngAfterViewInit() {
-    // Attendre que la vue soit complètement initialisée avant de créer l'éditeur
-    setTimeout(() => {
-      this.initEditor();
-    }, 0);
+    // La vue est déjà complètement initialisée dans ngAfterViewInit
+    this.initEditor();
   }
 
   ngOnDestroy() {
@@ -858,7 +857,6 @@ export class AngularTiptapEditorComponent
         // Note: La mise à jour des états des boutons est maintenant gérée par TiptapBubbleMenuComponent
       },
       onCreate: ({ editor }) => {
-        this.editor.set(editor);
         this.editorCreated.emit(editor);
         this.updateCharacterCount(editor);
 
@@ -876,6 +874,15 @@ export class AngularTiptapEditorComponent
         this.editorBlur.emit({ editor, event });
       },
     });
+
+    // Stocker la référence de l'éditeur immédiatement
+    this.editor.set(newEditor);
+
+    // Appliquer la valeur du FormControl en attente si elle existe
+    if (this.pendingFormValue !== null) {
+      this.setContent(this.pendingFormValue, false);
+      this.pendingFormValue = null;
+    }
   }
 
   private updateCharacterCount(editor: Editor) {
@@ -983,6 +990,10 @@ export class AngularTiptapEditorComponent
     const currentEditor = this.editor();
     if (currentEditor && value !== currentEditor.getHTML()) {
       this.setContent(value || "", false);
+      this.pendingFormValue = null; // Valeur appliquée, plus besoin de la stocker
+    } else {
+      // Éditeur pas encore prêt, stocker la valeur du FormControl pour plus tard
+      this.pendingFormValue = value || "";
     }
   }
 
