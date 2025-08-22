@@ -47,7 +47,7 @@ import {
   BubbleMenuConfig,
   ImageBubbleMenuConfig,
 } from "./models/bubble-menu.model";
-import { tap } from "rxjs";
+import { concat, defer, of, tap } from "rxjs";
 
 // Configuration par défaut de la toolbar
 export const DEFAULT_TOOLBAR_CONFIG: ToolbarConfig = {
@@ -630,70 +630,44 @@ export class AngularTiptapEditorComponent implements AfterViewInit, OnDestroy {
   isEditorReady = computed(() => this.editor() !== null);
 
   // Computed pour la configuration de la toolbar
-  toolbarConfig = computed(() => {
-    const userConfig = this.toolbar();
-    // Si aucune configuration n'est fournie, utiliser la configuration par défaut
-    if (Object.keys(userConfig).length === 0) {
-      return DEFAULT_TOOLBAR_CONFIG;
-    }
-    // Sinon, utiliser uniquement la configuration fournie par l'utilisateur
-    return userConfig;
-  });
+  toolbarConfig = computed(() =>
+    Object.keys(this.toolbar()).length === 0
+      ? DEFAULT_TOOLBAR_CONFIG
+      : this.toolbar()
+  );
 
   // Computed pour la configuration du bubble menu
-  bubbleMenuConfig = computed(() => {
-    const userConfig = this.bubbleMenu();
-    // Si aucune configuration n'est fournie, utiliser la configuration par défaut
-    if (Object.keys(userConfig).length === 0) {
-      return DEFAULT_BUBBLE_MENU_CONFIG;
-    }
-    // Sinon, fusionner avec la configuration par défaut
-    return {
-      ...DEFAULT_BUBBLE_MENU_CONFIG,
-      ...userConfig,
-    };
-  });
+  bubbleMenuConfig = computed(() =>
+    Object.keys(this.bubbleMenu()).length === 0
+      ? DEFAULT_BUBBLE_MENU_CONFIG
+      : { ...DEFAULT_BUBBLE_MENU_CONFIG, ...this.bubbleMenu() }
+  );
 
   // Computed pour la configuration du bubble menu image
-  imageBubbleMenuConfig = computed(() => {
-    const userConfig = this.imageBubbleMenu();
-    // Si aucune configuration n'est fournie, utiliser la configuration par défaut
-    if (Object.keys(userConfig).length === 0) {
-      return DEFAULT_IMAGE_BUBBLE_MENU_CONFIG;
-    }
-    // Sinon, fusionner avec la configuration par défaut
-    return {
-      ...DEFAULT_IMAGE_BUBBLE_MENU_CONFIG,
-      ...userConfig,
-    };
-  });
+  imageBubbleMenuConfig = computed(() =>
+    Object.keys(this.imageBubbleMenu()).length === 0
+      ? DEFAULT_IMAGE_BUBBLE_MENU_CONFIG
+      : { ...DEFAULT_IMAGE_BUBBLE_MENU_CONFIG, ...this.imageBubbleMenu() }
+  );
 
   // Computed pour la configuration de l'upload d'images
-  imageUploadConfig = computed(() => {
-    const userConfig = this.imageUpload();
-    return {
-      maxSize: 5,
-      maxWidth: 1920,
-      maxHeight: 1080,
-      allowedTypes: ["image/jpeg", "image/png", "image/gif", "image/webp"],
-      enableDragDrop: true,
-      showPreview: true,
-      multiple: false,
-      compressImages: true,
-      quality: 0.8,
-      ...userConfig,
-    };
-  });
+  imageUploadConfig = computed(() => ({
+    maxSize: 5,
+    maxWidth: 1920,
+    maxHeight: 1080,
+    allowedTypes: ["image/jpeg", "image/png", "image/gif", "image/webp"],
+    enableDragDrop: true,
+    showPreview: true,
+    multiple: false,
+    compressImages: true,
+    quality: 0.8,
+    ...this.imageUpload(),
+  }));
 
   // Computed pour la configuration des slash commands
-  slashCommandsConfigComputed = computed(() => {
-    const userConfig = this.slashCommandsConfig();
-    if (userConfig) {
-      return userConfig;
-    }
-    // Configuration par défaut si aucune n'est fournie
-    return { commands: undefined }; // Le composant utilisera DEFAULT_SLASH_COMMANDS
-  });
+  slashCommandsConfigComputed = computed(
+    () => this.slashCommandsConfig() ?? { commands: undefined }
+  );
 
   private _destroyRef = inject(DestroyRef);
   // NgControl pour gérer les FormControls
@@ -715,8 +689,13 @@ export class AngularTiptapEditorComponent implements AfterViewInit, OnDestroy {
     effect(() => {
       const editor = this.editor();
       const content = this.content();
+      const hasFormControl = !!(this.ngControl as any)?.control;
 
+      // Ne pas écraser le contenu si on a un FormControl et que le content est vide
       if (editor && content !== undefined && content !== editor.getHTML()) {
+        if (hasFormControl && !content) {
+          return;
+        }
         this.setContent(content, false);
       }
     });
@@ -836,7 +815,7 @@ export class AngularTiptapEditorComponent implements AfterViewInit, OnDestroy {
     const newEditor = new Editor({
       element: this.editorElement().nativeElement,
       extensions,
-      content: this.content(),
+      content: this.content() || undefined,
       editable: this.editable(),
       onUpdate: ({ editor, transaction }) => {
         const html = editor.getHTML();
@@ -876,12 +855,6 @@ export class AngularTiptapEditorComponent implements AfterViewInit, OnDestroy {
 
     // Stocker la référence de l'éditeur immédiatement
     this.editor.set(newEditor);
-
-    // Vérifier si on a un contenu initial via l'input content()
-    const initialContent = this.content();
-    if (initialContent) {
-      this.setContent(initialContent, false);
-    }
   }
 
   private updateCharacterCount(editor: Editor) {
@@ -984,35 +957,19 @@ export class AngularTiptapEditorComponent implements AfterViewInit, OnDestroy {
     this.editor()?.commands.clearContent();
   }
 
-  private normalizeHTML(html: string): string {
-    if (!html) return "";
-    // Normaliser les espaces et retours à la ligne pour une comparaison fiable
-    return html
-      .replace(/\s+/g, " ") // Remplacer espaces multiples par un seul
-      .replace(/>\s+</g, "><") // Supprimer espaces entre balises
-      .replace(/<br\s*\/?>/gi, "<br>") // Normaliser les <br>
-      .trim();
-  }
-
-  private checkInitialFormValue(): void {
-    // Vérifier si on a une valeur initiale dans le FormControl
-    if ((this.ngControl as any)?.control?.value) {
-      console.log(
-        "Found initial FormControl value:",
-        (this.ngControl as any).control.value
-      );
-      this.setContent((this.ngControl as any).control.value, false);
-    }
-  }
-
   private setupFormControlSubscription(): void {
     const control = (this.ngControl as any)?.control;
     if (control) {
-      control.valueChanges
+      const formValue$ = concat(
+        defer(() => of(control.value)),
+        control.valueChanges
+      );
+
+      formValue$
         .pipe(
           tap((value: any) => {
             const editor = this.editor();
-            if (editor && value !== editor.getHTML()) {
+            if (editor) {
               this.setContent(value, false);
             }
           }),
