@@ -1,0 +1,78 @@
+.slash-commands-menu {
+  background: var(--tiptap-color-surface, #ffffff);
+  border: 1px solid var(--tiptap-color-border, #e2e8f0);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px var(--tiptap-shadow-medium, rgba(0, 0, 0, 0.12));
+  padding: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+  min-width: 280px;
+  outline: none;
+}
+
+.slash-command-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+  outline: none;
+}
+
+.slash-command-item:hover {
+  background: var(--tiptap-color-surface-soft, #f1f5f9);
+  border-color: var(--tiptap-color-border, #e2e8f0);
+}
+
+.slash-command-item.selected {
+  background: var(--tiptap-color-surface-highlight, #f0f8ff);
+  border-color: var(--tiptap-color-accent, #3182ce);
+  box-shadow: 0 0 0 1px var(--tiptap-color-accent, #3182ce);
+}
+
+.slash-command-item:focus {
+  outline: 2px solid var(--tiptap-color-accent, #3182ce);
+  outline-offset: 2px;
+}
+
+.slash-command-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--tiptap-color-surface-muted, #f8f9fa);
+  border-radius: 6px;
+  color: var(--tiptap-color-accent, #3182ce);
+  flex-shrink: 0;
+}
+
+.slash-command-icon .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.slash-command-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.slash-command-title {
+  font-weight: 600;
+  color: var(--tiptap-color-text, #2d3748);
+  font-size: 14px;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.slash-command-description {
+  color: var(--tiptap-color-text-muted, #718096);
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

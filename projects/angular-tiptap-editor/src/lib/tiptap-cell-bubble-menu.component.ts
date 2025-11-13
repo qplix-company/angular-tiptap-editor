@@ -25,25 +25,8 @@ export interface CellBubbleMenuConfig {
   selector: "tiptap-cell-bubble-menu",
   standalone: true,
   imports: [CommonModule, TiptapButtonComponent],
-  template: `
-    <div #menuElement class="bubble-menu">
-      <!-- Actions spécifiques aux cellules -->
-      @if (config().mergeCells !== false && !isSingleCellSelected) {
-      <tiptap-button
-        icon="cell_merge"
-        title="{{ i18n.table().mergeCells }}"
-        (click)="mergeCells()"
-      ></tiptap-button>
-      } @if (config().splitCell !== false && isSingleCellSelected) {
-      <tiptap-button
-        icon="split_scene"
-        title="{{ i18n.table().splitCell }}"
-        (click)="splitCell()"
-      ></tiptap-button>
-      }
-    </div>
-  `,
-  styles: [],
+  templateUrl: "./tiptap-cell-bubble-menu.component.html",
+  styleUrls: ["./tiptap-cell-bubble-menu.component.css"],
 })
 export class TiptapCellBubbleMenuComponent implements OnInit, OnDestroy {
   @ViewChild("menuElement", { static: true }) menuElement!: ElementRef;

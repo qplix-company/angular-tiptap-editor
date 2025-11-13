@@ -1,46 +1,16 @@
 ﻿/* Styles de base pour l'éditeur Tiptap */
 
-:host {
-  /* Palette principale exposée pour personnalisation */
-  --tiptap-color-surface: #ffffff;
-  --tiptap-color-surface-muted: #f8f9fa;
-  --tiptap-color-surface-soft: #f1f5f9;
-  --tiptap-color-surface-highlight: #f0f8ff;
-  --tiptap-color-code-bg: #1a202c;
-  --tiptap-color-text: #2d3748;
-  --tiptap-color-text-muted: #718096;
-  --tiptap-color-placeholder: #a0aec0;
-  --tiptap-color-table-heading-text: #374151;
-  --tiptap-color-border: #e2e8f0;
-  --tiptap-color-accent: #3182ce;
-  --tiptap-color-selection: #6366f1;
-  --tiptap-color-selection-overlay: rgba(99, 102, 241, 0.1);
-  --tiptap-color-focus-ring: rgba(49, 130, 206, 0.1);
-  --tiptap-color-table-selection-overlay: rgba(200, 200, 255, 0.4);
-  --tiptap-color-handle: #3b82f6;
-  --tiptap-color-handle-hover: #2563eb;
-  --tiptap-color-handle-active: #1d4ed8;
-  --tiptap-color-table-handle-hover: #4f46e5;
-  --tiptap-shadow-subtle: rgba(0, 0, 0, 0.08);
-  --tiptap-shadow-soft: rgba(0, 0, 0, 0.1);
-  --tiptap-shadow-medium: rgba(0, 0, 0, 0.12);
-  --tiptap-shadow-strong: rgba(0, 0, 0, 0.2);
-  --tiptap-shadow-stronger: rgba(0, 0, 0, 0.3);
-  --tiptap-tooltip-bg: rgba(0, 0, 0, 0.8);
-  --tiptap-color-on-dark: #ffffff;
-}
-
 /* Conteneur principal de l'éditeur */
 .tiptap-editor {
-  border: 2px solid var(--tiptap-color-border);
+  border: 2px solid var(--tiptap-color-border, #e2e8f0);
   border-radius: 8px;
-  background: var(--tiptap-color-surface);
+  background: var(--tiptap-color-surface, #ffffff);
   overflow: hidden;
   transition: border-color 0.2s ease;
 }
 
 .tiptap-editor:focus-within {
-  border-color: var(--tiptap-color-accent);
+  border-color: var(--tiptap-color-accent, #3182ce);
 }
 
 /* Contenu de l'éditeur */
@@ -55,18 +25,18 @@
 }
 
 .tiptap-content.drag-over {
-  background: var(--tiptap-color-surface-highlight);
-  border: 2px dashed var(--tiptap-color-accent);
+  background: var(--tiptap-color-surface-highlight, #f0f8ff);
+  border: 2px dashed var(--tiptap-color-accent, #3182ce);
 }
 
 /* Compteur de caractères */
 .character-count {
   padding: 8px 16px;
   font-size: 12px;
-  color: var(--tiptap-color-text-muted);
+  color: var(--tiptap-color-text-muted, #718096);
   text-align: right;
-  border-top: 1px solid var(--tiptap-color-border);
-  background: var(--tiptap-color-surface-muted);
+  border-top: 1px solid var(--tiptap-color-border, #e2e8f0);
+  background: var(--tiptap-color-surface-muted, #f8f9fa);
 }
 
 /* Styles spécifiques au composant */
@@ -79,7 +49,7 @@
 :host ::ng-deep .ProseMirror {
   outline: none;
   line-height: 1.6;
-  color: var(--tiptap-color-text);
+  color: var(--tiptap-color-text, #2d3748);
   min-height: 100%;
   height: 100%;
   /* S'assurer que le contenu s'étend correctement dans un conteneur scrollable */
@@ -122,18 +92,18 @@
 
 /* Citations */
 :host ::ng-deep .ProseMirror blockquote {
-  border-left: 4px solid var(--tiptap-color-border);
+  border-left: 4px solid var(--tiptap-color-border, #e2e8f0);
   padding-left: 1em;
   margin: 1em 0;
   font-style: italic;
-  background: var(--tiptap-color-surface-muted);
+  background: var(--tiptap-color-surface-muted, #f8f9fa);
   padding: 0.5em 1em;
   border-radius: 0 4px 4px 0;
 }
 
 /* Code */
 :host ::ng-deep .ProseMirror code {
-  background: var(--tiptap-color-surface-soft);
+  background: var(--tiptap-color-surface-soft, #f1f5f9);
   padding: 0.2em 0.4em;
   border-radius: 3px;
   font-family: "Monaco", "Consolas", monospace;
@@ -141,8 +111,8 @@
 }
 
 :host ::ng-deep .ProseMirror pre {
-  background: var(--tiptap-color-code-bg);
-  color: var(--tiptap-color-border);
+  background: var(--tiptap-color-code-bg, #1a202c);
+  color: var(--tiptap-color-border, #e2e8f0);
   padding: 1em;
   border-radius: 6px;
   overflow-x: auto;
@@ -158,7 +128,7 @@
 /* Placeholder */
 :host ::ng-deep .ProseMirror p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
-  color: var(--tiptap-color-placeholder);
+  color: var(--tiptap-color-placeholder, #a0aec0);
   pointer-events: none;
   float: left;
   height: 0;
@@ -176,7 +146,7 @@
 
 :host ::ng-deep .ProseMirror[contenteditable="false"] img:hover {
   transform: none;
-  box-shadow: 0 2px 8px var(--tiptap-shadow-soft);
+  box-shadow: 0 2px 8px var(--tiptap-shadow-soft, rgba(0, 0, 0, 0.1));
 }
 
 :host
@@ -199,13 +169,13 @@ img.ProseMirror-selectednode {
 }
 
 :host ::ng-deep .ProseMirror img:hover {
-  border-color: var(--tiptap-color-border);
-  box-shadow: 0 2px 4px var(--tiptap-shadow-soft);
+  border-color: var(--tiptap-color-border, #e2e8f0);
+  box-shadow: 0 2px 4px var(--tiptap-shadow-soft, rgba(0, 0, 0, 0.1));
 }
 
 :host ::ng-deep .ProseMirror img.ProseMirror-selectednode {
-  border-color: var(--tiptap-color-accent);
-  box-shadow: 0 0 0 3px var(--tiptap-color-focus-ring);
+  border-color: var(--tiptap-color-accent, #3182ce);
+  box-shadow: 0 0 0 3px var(--tiptap-color-focus-ring, rgba(49, 130, 206, 0.1));
   transition: all 0.2s ease;
 }
 
@@ -214,7 +184,7 @@ img.ProseMirror-selectednode {
   max-width: 100%;
   height: auto;
   border-radius: 16px;
-  box-shadow: 0 4px 20px var(--tiptap-shadow-subtle);
+  box-shadow: 0 4px 20px var(--tiptap-shadow-subtle, rgba(0, 0, 0, 0.08));
   margin: 0.5em 0;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -223,15 +193,15 @@ img.ProseMirror-selectednode {
 }
 
 :host ::ng-deep .ProseMirror .tiptap-image:hover {
-  box-shadow: 0 8px 30px var(--tiptap-shadow-medium);
+  box-shadow: 0 8px 30px var(--tiptap-shadow-medium, rgba(0, 0, 0, 0.12));
   filter: brightness(1.02) contrast(1.02);
 }
 
 :host ::ng-deep .ProseMirror .tiptap-image.ProseMirror-selectednode {
-  outline: 2px solid var(--tiptap-color-selection);
+  outline: 2px solid var(--tiptap-color-selection, #6366f1);
   outline-offset: 2px;
   border-radius: 16px;
-  box-shadow: 0 0 0 4px var(--tiptap-color-selection-overlay);
+  box-shadow: 0 0 0 4px var(--tiptap-color-selection-overlay, rgba(99, 102, 241, 0.1));
 }
 
 /* Conteneurs d'images avec alignement */
@@ -285,23 +255,23 @@ img.ProseMirror-selectednode {
   position: absolute;
   width: 12px;
   height: 12px;
-  background: var(--tiptap-color-handle);
-  border: 2px solid var(--tiptap-color-surface);
+  background: var(--tiptap-color-handle, #3b82f6);
+  border: 2px solid var(--tiptap-color-surface, #ffffff);
   border-radius: 50%;
   pointer-events: all;
   cursor: pointer;
   z-index: 1001;
   transition: all 0.15s ease;
-  box-shadow: 0 2px 6px var(--tiptap-shadow-strong);
+  box-shadow: 0 2px 6px var(--tiptap-shadow-strong, rgba(0, 0, 0, 0.2));
 }
 
 :host ::ng-deep .resize-handle:hover {
-  background: var(--tiptap-color-handle-hover);
-  box-shadow: 0 3px 8px var(--tiptap-shadow-stronger);
+  background: var(--tiptap-color-handle-hover, #2563eb);
+  box-shadow: 0 3px 8px var(--tiptap-shadow-stronger, rgba(0, 0, 0, 0.3));
 }
 
 :host ::ng-deep .resize-handle:active {
-  background: var(--tiptap-color-handle-active);
+  background: var(--tiptap-color-handle-active, #1d4ed8);
 }
 
 /* Poignées du milieu avec scale séparé */
@@ -406,8 +376,8 @@ img.ProseMirror-selectednode {
   bottom: -20px;
   left: 50%;
   transform: translateX(-50%);
-  background: var(--tiptap-tooltip-bg);
-  color: var(--tiptap-color-on-dark);
+  background: var(--tiptap-tooltip-bg, rgba(0, 0, 0, 0.8));
+  color: var(--tiptap-color-on-dark, #ffffff);
   padding: 2px 6px;
   border-radius: 3px;
   font-size: 11px;
@@ -433,25 +403,25 @@ img.ProseMirror-selectednode {
 :host ::ng-deep .ProseMirror table td,
 :host ::ng-deep .ProseMirror table th {
   border: none;
-  border-right: 1px solid var(--tiptap-color-border);
-  border-bottom: 1px solid var(--tiptap-color-border);
+  border-right: 1px solid var(--tiptap-color-border, #e2e8f0);
+  border-bottom: 1px solid var(--tiptap-color-border, #e2e8f0);
   box-sizing: border-box;
   min-width: 1em;
   padding: 8px 12px;
   position: relative;
   vertical-align: top;
-  background: var(--tiptap-color-surface);
+  background: var(--tiptap-color-surface, #ffffff);
 }
 
 /* Ajouter les bordures externes manquantes pour former la bordure du tableau */
 :host ::ng-deep .ProseMirror table td:first-child,
 :host ::ng-deep .ProseMirror table th:first-child {
-  border-left: 1px solid var(--tiptap-color-border);
+  border-left: 1px solid var(--tiptap-color-border, #e2e8f0);
 }
 
 :host ::ng-deep .ProseMirror table tr:first-child td,
 :host ::ng-deep .ProseMirror table tr:first-child th {
-  border-top: 1px solid var(--tiptap-color-border);
+  border-top: 1px solid var(--tiptap-color-border, #e2e8f0);
 }
 
 /* Coins arrondis */
@@ -473,14 +443,14 @@ img.ProseMirror-selectednode {
 
 /* En-têtes de table */
 :host ::ng-deep .ProseMirror table th {
-  background: var(--tiptap-color-surface-muted);
+  background: var(--tiptap-color-surface-muted, #f8f9fa);
   font-weight: 600;
-  color: var(--tiptap-color-table-heading-text);
+  color: var(--tiptap-color-table-heading-text, #374151);
 }
 
 /* Cellules sélectionnées */
 :host ::ng-deep .ProseMirror table .selectedCell:after {
-  background: var(--tiptap-color-table-selection-overlay);
+  background: var(--tiptap-color-table-selection-overlay, rgba(200, 200, 255, 0.4));
   content: "";
   left: 0;
   right: 0;
@@ -498,7 +468,7 @@ img.ProseMirror-selectednode {
   top: 0;
   bottom: 0;
   width: 4px;
-  background-color: var(--tiptap-color-selection);
+  background-color: var(--tiptap-color-selection, #6366f1);
   opacity: 0;
   transition: opacity 0.2s ease;
 }
@@ -508,7 +478,7 @@ img.ProseMirror-selectednode {
 }
 
 :host ::ng-deep .ProseMirror table .column-resize-handle:hover {
-  background-color: var(--tiptap-color-table-handle-hover);
+  background-color: var(--tiptap-color-table-handle-hover, #4f46e5);
 }
 
 /* Container avec scroll horizontal */
@@ -532,22 +502,22 @@ img.ProseMirror-selectednode {
 
 /* Styles pour les cellules sélectionnées */
 :host ::ng-deep .ProseMirror table .selectedCell {
-  background-color: var(--tiptap-color-selection-overlay);
+  background-color: var(--tiptap-color-selection-overlay, rgba(99, 102, 241, 0.1));
 }
 
 /* Styles pour les en-têtes de table */
 :host ::ng-deep .ProseMirror table th {
-  background-color: var(--tiptap-color-surface-muted);
+  background-color: var(--tiptap-color-surface-muted, #f8f9fa);
   font-weight: 600;
-  color: var(--tiptap-color-table-heading-text);
+  color: var(--tiptap-color-table-heading-text, #374151);
   text-align: left;
 }
 
 /* Styles pour les lignes alternées (optionnel) */
 :host ::ng-deep .ProseMirror table tbody tr:nth-child(even) {
-  background-color: var(--tiptap-color-surface-muted);
+  background-color: var(--tiptap-color-surface-muted, #f8f9fa);
 }
 
 :host ::ng-deep .ProseMirror table tbody tr:hover {
-  background-color: var(--tiptap-color-surface-soft);
+  background-color: var(--tiptap-color-surface-soft, #f1f5f9);
 }

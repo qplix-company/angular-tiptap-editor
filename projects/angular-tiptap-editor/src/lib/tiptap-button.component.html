@@ -1,0 +1,24 @@
+<button
+  class="tiptap-button"
+  [class.is-active]="active()"
+  [class.is-disabled]="disabled()"
+  [class.text-button]="variant() === 'text'"
+  [class.danger]="variant() === 'danger'"
+  [class.small]="size() === 'small'"
+  [class.medium]="size() === 'medium'"
+  [class.large]="size() === 'large'"
+  [disabled]="disabled()"
+  [attr.title]="title()"
+  (mousedown)="onMouseDown($event)"
+  (click)="onClick.emit($event)"
+  type="button"
+>
+  <span
+    class="material-symbols-outlined"
+    [class.icon-small]="iconSize() === 'small'"
+    [class.icon-medium]="iconSize() === 'medium'"
+    [class.icon-large]="iconSize() === 'large'"
+    >{{ icon() }}</span
+  >
+  <ng-content></ng-content>
+</button>

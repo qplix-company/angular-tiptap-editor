@@ -21,85 +21,8 @@ import { TableBubbleMenuConfig } from "./models/bubble-menu.model";
   selector: "tiptap-table-bubble-menu",
   standalone: true,
   imports: [CommonModule, TiptapButtonComponent, TiptapSeparatorComponent],
-  template: `
-    <div #menuElement class="bubble-menu">
-      <!-- Actions de lignes -->
-      @if (config().addRowBefore !== false) {
-      <tiptap-button
-        icon="add_row_above"
-        title="{{ i18n.table().addRowBefore }}"
-        (click)="addRowBefore()"
-      ></tiptap-button>
-      } @if (config().addRowAfter !== false) {
-      <tiptap-button
-        icon="add_row_below"
-        title="{{ i18n.table().addRowAfter }}"
-        (click)="addRowAfter()"
-      ></tiptap-button>
-      } @if (config().deleteRow !== false) {
-      <tiptap-button
-        icon="delete"
-        title="{{ i18n.table().deleteRow }}"
-        variant="danger"
-        (click)="deleteRow()"
-      ></tiptap-button>
-      } @if (config().separator !== false) {
-      <tiptap-separator></tiptap-separator>
-      }
-
-      <!-- Actions de colonnes -->
-      @if (config().addColumnBefore !== false) {
-      <tiptap-button
-        icon="add_column_left"
-        title="{{ i18n.table().addColumnBefore }}"
-        (click)="addColumnBefore()"
-      ></tiptap-button>
-      } @if (config().addColumnAfter !== false) {
-      <tiptap-button
-        icon="add_column_right"
-        title="{{ i18n.table().addColumnAfter }}"
-        (click)="addColumnAfter()"
-      ></tiptap-button>
-      } @if (config().deleteColumn !== false) {
-      <tiptap-button
-        icon="delete"
-        title="{{ i18n.table().deleteColumn }}"
-        variant="danger"
-        (click)="deleteColumn()"
-      ></tiptap-button>
-      } @if (config().separator !== false) {
-      <tiptap-separator></tiptap-separator>
-      }
-
-      <!-- Actions de cellules -->
-      @if (config().toggleHeaderRow !== false) {
-      <tiptap-button
-        icon="toolbar"
-        title="{{ i18n.table().toggleHeaderRow }}"
-        (click)="toggleHeaderRow()"
-      ></tiptap-button>
-      } @if (config().toggleHeaderColumn !== false) {
-      <tiptap-button
-        icon="dock_to_right"
-        title="{{ i18n.table().toggleHeaderColumn }}"
-        (click)="toggleHeaderColumn()"
-      ></tiptap-button>
-      } @if (config().separator !== false && config().deleteTable !== false) {
-      <tiptap-separator></tiptap-separator>
-      }
-
-      <!-- Actions de table -->
-      @if (config().deleteTable !== false) {
-      <tiptap-button
-        icon="delete_forever"
-        title="{{ i18n.table().deleteTable }}"
-        variant="danger"
-        (click)="deleteTable()"
-      ></tiptap-button>
-      }
-    </div>
-  `,
-  styles: [],
+  templateUrl: "./tiptap-table-bubble-menu.component.html",
+  styleUrls: ["./tiptap-table-bubble-menu.component.css"],
 })
 export class TiptapTableBubbleMenuComponent implements OnInit, OnDestroy {
   @ViewChild("menuElement", { static: true }) menuElement!: ElementRef;

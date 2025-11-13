@@ -1,0 +1,69 @@
+<div class="image-upload-container">
+  <!-- Bouton d'upload -->
+  <tiptap-button
+    icon="image"
+    title="Ajouter une image"
+    [disabled]="isUploading()"
+    (onClick)="triggerFileInput()"
+  />
+
+  <!-- Input file caché -->
+  <input
+    #fileInput
+    type="file"
+    [accept]="acceptedTypes()"
+    [multiple]="config().multiple"
+    (change)="onFileSelected($event)"
+    style="display: none;"
+  />
+
+  <!-- Zone de drag & drop -->
+  @if (config().enableDragDrop && isDragOver()) {
+  <div
+    class="drag-overlay"
+    (dragover)="onDragOver($event)"
+    (drop)="onDrop($event)"
+    (dragleave)="onDragLeave($event)"
+  >
+    <div class="drag-content">
+      <span class="material-symbols-outlined">cloud_upload</span>
+      <p>Déposez votre image ici</p>
+    </div>
+  </div>
+  }
+
+  <!-- Barre de progression -->
+  @if (isUploading() && uploadProgress() > 0) {
+  <div class="upload-progress">
+    <div class="progress-bar">
+      <div class="progress-fill" [style.width.%]="uploadProgress()"></div>
+    </div>
+    <div class="progress-text">{{ uploadProgress() }}%</div>
+  </div>
+  }
+
+  <!-- Prévisualisation -->
+  @if (config().showPreview && previewImage()) {
+  <div class="image-preview">
+    <img [src]="previewImage()" alt="Prévisualisation" />
+    <div class="preview-info">
+      <span>{{ previewInfo() }}</span>
+    </div>
+    <button
+      class="preview-close"
+      (click)="clearPreview()"
+      title="Fermer la prévisualisation"
+    >
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </div>
+  }
+
+  <!-- Messages d'erreur -->
+  @if (errorMessage()) {
+  <div class="error-message">
+    <span class="material-symbols-outlined">error</span>
+    {{ errorMessage() }}
+  </div>
+  }
+</div>

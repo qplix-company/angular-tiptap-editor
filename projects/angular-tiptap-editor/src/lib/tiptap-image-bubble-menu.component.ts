@@ -20,57 +20,8 @@ import { ImageBubbleMenuConfig } from "./models/bubble-menu.model";
   selector: "tiptap-image-bubble-menu",
   standalone: true,
   imports: [TiptapButtonComponent, TiptapSeparatorComponent],
-  template: `
-    <div #menuRef class="bubble-menu">
-      @if (imageBubbleMenuConfig().changeImage) {
-      <tiptap-button
-        icon="drive_file_rename_outline"
-        title="Changer l'image"
-        (click)="onCommand('changeImage', $event)"
-      ></tiptap-button>
-      } @if (imageBubbleMenuConfig().separator && hasResizeButtons()) {
-      <tiptap-separator></tiptap-separator>
-      } @if (imageBubbleMenuConfig().resizeSmall) {
-      <tiptap-button
-        icon="crop_square"
-        iconSize="small"
-        title="Petite (300×200)"
-        (click)="onCommand('resizeSmall', $event)"
-      ></tiptap-button>
-      } @if (imageBubbleMenuConfig().resizeMedium) {
-      <tiptap-button
-        icon="crop_square"
-        iconSize="medium"
-        title="Moyenne (500×350)"
-        (click)="onCommand('resizeMedium', $event)"
-      ></tiptap-button>
-      } @if (imageBubbleMenuConfig().resizeLarge) {
-      <tiptap-button
-        icon="crop_square"
-        iconSize="large"
-        title="Grande (800×600)"
-        (click)="onCommand('resizeLarge', $event)"
-      ></tiptap-button>
-      } @if (imageBubbleMenuConfig().resizeOriginal) {
-      <tiptap-button
-        icon="photo_size_select_actual"
-        title="Taille originale"
-        (click)="onCommand('resizeOriginal', $event)"
-      ></tiptap-button>
-      } @if (imageBubbleMenuConfig().separator &&
-      imageBubbleMenuConfig().deleteImage) {
-      <tiptap-separator></tiptap-separator>
-      } @if (imageBubbleMenuConfig().deleteImage) {
-      <tiptap-button
-        icon="delete"
-        title="Supprimer l'image"
-        variant="danger"
-        (click)="onCommand('deleteImage', $event)"
-      ></tiptap-button>
-      }
-    </div>
-  `,
-  styles: [],
+  templateUrl: "./tiptap-image-bubble-menu.component.html",
+  styleUrls: ["./tiptap-image-bubble-menu.component.css"],
 })
 export class TiptapImageBubbleMenuComponent implements OnInit, OnDestroy {
   editor = input.required<Editor>();

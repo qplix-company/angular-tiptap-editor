@@ -1,0 +1,36 @@
+/* Mapping der Tiptap-Editor-Farbvariablen auf das bestehende Design-Tokenset */
+
+:root {
+  --tiptap-color-surface: var(--semantic-surface-neutral-raised-enabled);
+  --tiptap-color-surface-muted: var(--semantic-background-neutral-elevation-0);
+  --tiptap-color-surface-soft: var(--semantic-background-skeleton-bright);
+  --tiptap-color-surface-highlight: var(--semantic-background-info-subtle);
+  --tiptap-color-code-bg: var(--semantic-background-neutral-inverted);
+  --tiptap-color-text: var(--semantic-text-neutral-dark);
+  --tiptap-color-text-muted: var(--semantic-text-neutral-moderate);
+  --tiptap-color-placeholder: var(--semantic-text-neutral-subtle);
+  --tiptap-color-table-heading-text: var(--semantic-text-neutral-strong);
+  --tiptap-color-border: var(--semantic-background-neutral-subtle);
+  --tiptap-color-accent: var(--semantic-surface-accent-enabled);
+  --tiptap-color-selection: var(--semantic-abstract-colours-chart-map-7);
+  --tiptap-color-selection-overlay: var(--semantic-abstract-colours-accent-alpha-25);
+  --tiptap-color-focus-ring: var(--semantic-abstract-colours-accent-alpha-10);
+  --tiptap-color-table-selection-overlay: var(--semantic-abstract-colours-accent-alpha-50);
+  --tiptap-color-handle: var(--semantic-abstract-colours-accent-nuances-primary);
+  --tiptap-color-handle-hover: var(--semantic-abstract-colours-accent-foreground);
+  --tiptap-color-handle-active: var(--semantic-abstract-colours-accent-nuances-secondary);
+  --tiptap-color-table-handle-hover: var(--semantic-abstract-colours-accent-nuances-tertiary);
+  --tiptap-color-danger: var(--semantic-border-danger);
+  --tiptap-color-danger-soft: var(--semantic-abstract-colours-danger-foreground);
+  --tiptap-color-danger-overlay: var(--semantic-background-danger-subtle);
+  --tiptap-color-danger-bg: var(--semantic-background-danger-subtle);
+  --tiptap-color-danger-border: var(--semantic-border-danger);
+  --tiptap-color-danger-text: var(--semantic-text-danger);
+  --tiptap-shadow-subtle: var(--semantic-surface-neutral-flat-disabled);
+  --tiptap-shadow-soft: var(--semantic-surface-neutral-flat-hovered);
+  --tiptap-shadow-medium: var(--semantic-surface-neutral-flat-enabled);
+  --tiptap-shadow-strong: var(--semantic-surface-neutral-flat-pressed);
+  --tiptap-shadow-stronger: var(--semantic-border-neutral-moderate);
+  --tiptap-tooltip-bg: var(--semantic-background-neutral-inverted);
+  --tiptap-color-on-dark: var(--semantic-text-neutral-inverted);
+}

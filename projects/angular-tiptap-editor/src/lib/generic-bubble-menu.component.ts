@@ -13,18 +13,8 @@ import tippy, { Instance as TippyInstance, Placement } from "tippy.js";
 @Component({
   selector: "generic-bubble-menu",
   standalone: true,
-  template: `
-    <div #menuRef class="bubble-menu">
-      <ng-content></ng-content>
-    </div>
-  `,
-  styles: [
-    `
-      :host {
-        display: contents;
-      }
-    `,
-  ],
+  templateUrl: "./generic-bubble-menu.component.html",
+  styleUrls: ["./generic-bubble-menu.component.css"],
 })
 export class GenericBubbleMenuComponent implements AfterViewInit, OnDestroy {
   editor = input.required<Editor>();

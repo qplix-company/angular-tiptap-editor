@@ -1,0 +1,18 @@
+<div #menuRef class="slash-commands-menu">
+  @for (command of filteredCommands(); track command.title) {
+  <div
+    class="slash-command-item"
+    [class.selected]="$index === selectedIndex()"
+    (click)="executeCommand(command)"
+    (mouseenter)="selectedIndex.set($index)"
+  >
+    <div class="slash-command-icon">
+      <span class="material-symbols-outlined">{{ command.icon }}</span>
+    </div>
+    <div class="slash-command-content">
+      <div class="slash-command-title">{{ command.title }}</div>
+      <div class="slash-command-description">{{ command.description }}</div>
+    </div>
+  </div>
+  }
+</div>
