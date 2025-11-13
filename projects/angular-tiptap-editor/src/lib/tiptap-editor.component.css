@@ -2,11 +2,15 @@
 
 /* Conteneur principal de l'éditeur */
 .tiptap-editor {
-  border: 2px solid var(--tiptap-color-border, #e2e8f0);
+  border: 2px solid transparent;
   border-radius: 8px;
   background: var(--tiptap-color-surface, #ffffff);
   overflow: hidden;
   transition: border-color 0.2s ease;
+}
+
+:host.editable .tiptap-editor {
+  border: 2px solid var(--tiptap-color-border, #e2e8f0);
 }
 
 .tiptap-editor:focus-within {

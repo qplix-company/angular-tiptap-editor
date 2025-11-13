@@ -49,7 +49,10 @@ import { ImageUploadResult } from "./services/image.service";
 import { ToolbarConfig } from "./tiptap-toolbar.component";
 import { BubbleMenuConfig, ImageBubbleMenuConfig, TableBubbleMenuConfig } from "./models/bubble-menu.model";
 import { concat, defer, of, tap, Subscription } from "rxjs";
-import { TiptapBubbleMenuPortalDirective, TiptapBubbleMenuTemplateContext } from "./directives/tiptap-bubble-menu-portal.directive";
+import {
+  TiptapBubbleMenuPortalDirective,
+  TiptapBubbleMenuTemplateContext,
+} from "./directives/tiptap-bubble-menu-portal.directive";
 
 // Configuration par défaut de la toolbar
 export const DEFAULT_TOOLBAR_CONFIG: ToolbarConfig = {
@@ -124,6 +127,7 @@ export const DEFAULT_TABLE_MENU_CONFIG: TableBubbleMenuConfig = {
   selector: "angular-tiptap-editor",
   exportAs: "angularTiptapEditor",
   standalone: true,
+  host: { "[class.editable]": "this.editable()" },
   hostDirectives: [NoopValueAccessorDirective],
   imports: [
     NgTemplateOutlet,
@@ -283,7 +287,6 @@ export class AngularTiptapEditorComponent implements AfterViewInit, OnDestroy {
       this._customBubbleMenus.set(list.toArray());
     });
   }
-
 
   constructor() {
     // Effet pour gérer le changement de langue
