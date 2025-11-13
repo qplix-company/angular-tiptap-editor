@@ -625,7 +625,7 @@ export class AngularTiptapEditorComponent implements AfterViewInit, OnDestroy {
 
   onEditorClick(event: MouseEvent) {
     const editor = this.editor();
-    if (!editor) return;
+    if (!editor || !this.editable() || !editor.isEditable) return;
 
     // Vérifier si on clique sur l'élément conteneur et non sur le contenu
     const target = event.target as HTMLElement;
