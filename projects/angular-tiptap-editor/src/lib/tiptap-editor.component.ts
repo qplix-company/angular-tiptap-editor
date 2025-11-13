@@ -127,7 +127,10 @@ export const DEFAULT_TABLE_MENU_CONFIG: TableBubbleMenuConfig = {
   selector: "angular-tiptap-editor",
   exportAs: "angularTiptapEditor",
   standalone: true,
-  host: { "[class.editable]": "this.editable()" },
+  host: { 
+    "[class.editable]": "this.editable()", 
+    "[class.readonly]": "!this.editable()" 
+  },
   hostDirectives: [NoopValueAccessorDirective],
   imports: [
     NgTemplateOutlet,
