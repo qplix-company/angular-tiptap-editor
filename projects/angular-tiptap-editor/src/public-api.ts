@@ -5,6 +5,10 @@
 // Main component - only public component
 export * from "./lib/tiptap-editor.component";
 
+// Composition helper directives
+export { TiptapBubbleMenuPortalDirective } from "./lib/directives/tiptap-bubble-menu-portal.directive";
+export type { TiptapBubbleMenuTemplateContext } from "./lib/directives/tiptap-bubble-menu-portal.directive";
+
 // Host directive for FormControl integration
 export * from "./lib/noop-value-accessor.directive";
 

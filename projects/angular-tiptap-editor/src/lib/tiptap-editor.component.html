@@ -68,6 +68,16 @@
     ></tiptap-cell-bubble-menu>
   }
 
+  <!-- Custom bubble menus projected from consumers -->
+  @if (customBubbleMenus().length) {
+    @for (menu of customBubbleMenus(); track menu.key ?? menu) {
+      <ng-container
+        [ngTemplateOutlet]="menu.templateRef"
+        [ngTemplateOutletContext]="bubbleMenuOutletContext()"
+      ></ng-container>
+    }
+  }
+
   <!-- Table Edit Button - Supprimé car remplacé par le menu bubble -->
 
   <!-- Compteur de caractères -->

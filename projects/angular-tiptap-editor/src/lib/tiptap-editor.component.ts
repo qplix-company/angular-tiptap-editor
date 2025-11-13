@@ -1,5 +1,6 @@
 import {
   Component,
+  ContentChildren,
   ElementRef,
   input,
   output,
@@ -11,7 +12,9 @@ import {
   AfterViewInit,
   inject,
   DestroyRef,
+  QueryList,
 } from "@angular/core";
+import { NgTemplateOutlet } from "@angular/common";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Editor, Extension, Node, Mark } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
@@ -45,7 +48,8 @@ import { filterSlashCommands, SLASH_COMMAND_KEYS } from "./config/i18n-slash-com
 import { ImageUploadResult } from "./services/image.service";
 import { ToolbarConfig } from "./tiptap-toolbar.component";
 import { BubbleMenuConfig, ImageBubbleMenuConfig, TableBubbleMenuConfig } from "./models/bubble-menu.model";
-import { concat, defer, of, tap } from "rxjs";
+import { concat, defer, of, tap, Subscription } from "rxjs";
+import { TiptapBubbleMenuPortalDirective, TiptapBubbleMenuTemplateContext } from "./directives/tiptap-bubble-menu-portal.directive";
 
 // Configuration par défaut de la toolbar
 export const DEFAULT_TOOLBAR_CONFIG: ToolbarConfig = {
@@ -118,9 +122,11 @@ export const DEFAULT_TABLE_MENU_CONFIG: TableBubbleMenuConfig = {
 
 @Component({
   selector: "angular-tiptap-editor",
+  exportAs: "angularTiptapEditor",
   standalone: true,
   hostDirectives: [NoopValueAccessorDirective],
   imports: [
+    NgTemplateOutlet,
     TiptapToolbarComponent,
     TiptapImageUploadComponent,
     TiptapBubbleMenuComponent,
@@ -177,6 +183,9 @@ export class AngularTiptapEditorComponent implements AfterViewInit, OnDestroy {
   private _wordCount = signal<number>(0);
   private _isDragOver = signal<boolean>(false);
   private _editorFullyInitialized = signal<boolean>(false);
+  private _customBubbleMenus = signal<TiptapBubbleMenuPortalDirective[]>([]);
+  private customBubbleMenusChanges: Subscription | null = null;
+  private bubbleMenuContext: TiptapBubbleMenuTemplateContext = { $implicit: null, editor: null };
 
   // Accès en lecture seule aux signaux
   readonly editor = this._editor.asReadonly();
@@ -184,6 +193,7 @@ export class AngularTiptapEditorComponent implements AfterViewInit, OnDestroy {
   readonly wordCount = this._wordCount.asReadonly();
   readonly isDragOver = this._isDragOver.asReadonly();
   readonly editorFullyInitialized = this._editorFullyInitialized.asReadonly();
+  readonly customBubbleMenus = this._customBubbleMenus.asReadonly();
 
   // Computed pour les états de l'éditeur
   isEditorReady = computed(() => this.editor() !== null);
@@ -257,6 +267,23 @@ export class AngularTiptapEditorComponent implements AfterViewInit, OnDestroy {
   readonly i18nService = inject(TiptapI18nService);
   readonly imageService = inject(ImageService);
   readonly editorCommandsService = inject(EditorCommandsService);
+
+  @ContentChildren(TiptapBubbleMenuPortalDirective)
+  set projectedBubbleMenus(value: QueryList<TiptapBubbleMenuPortalDirective> | undefined) {
+    this.customBubbleMenusChanges?.unsubscribe();
+
+    if (!value) {
+      this._customBubbleMenus.set([]);
+      this.customBubbleMenusChanges = null;
+      return;
+    }
+
+    this._customBubbleMenus.set(value.toArray());
+    this.customBubbleMenusChanges = value.changes.subscribe((list: QueryList<TiptapBubbleMenuPortalDirective>) => {
+      this._customBubbleMenus.set(list.toArray());
+    });
+  }
+
 
   constructor() {
     // Effet pour gérer le changement de langue
@@ -333,6 +360,8 @@ export class AngularTiptapEditorComponent implements AfterViewInit, OnDestroy {
       currentEditor.destroy();
     }
     this._editorFullyInitialized.set(false);
+    this.customBubbleMenusChanges?.unsubscribe();
+    this.customBubbleMenusChanges = null;
   }
 
   private initEditor() {
@@ -552,6 +581,13 @@ export class AngularTiptapEditorComponent implements AfterViewInit, OnDestroy {
   // Méthode publique pour obtenir l'éditeur
   getEditor(): Editor | null {
     return this.editor();
+  }
+
+  bubbleMenuOutletContext(): TiptapBubbleMenuTemplateContext {
+    const editor = this.editor();
+    this.bubbleMenuContext.$implicit = editor;
+    this.bubbleMenuContext.editor = editor;
+    return this.bubbleMenuContext;
   }
 
   private setupFormControlSubscription(): void {

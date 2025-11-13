@@ -325,6 +325,37 @@ const slashCommands = {
 console.log(SLASH_COMMAND_KEYS); // ["heading1", "heading2", "heading3", "bulletList", "orderedList", "blockquote", "code", "image", "horizontalRule", "table"]
 ```
 
+### Projecting Custom Bubble Menus
+
+You can now compose the editor UI by projecting your own bubble menus. The library ships a `TiptapBubbleMenuPortalDirective` that exposes the current `Editor` instance to any template inside `<angular-tiptap-editor>`.
+
+1. Import the directive alongside the editor component:
+
+```ts
+import {
+  AngularTiptapEditorComponent,
+  TiptapBubbleMenuPortalDirective,
+} from "@flogeez/angular-tiptap-editor";
+```
+
+2. Register your template inside the editor and grab the editor reference through the template context:
+
+```html
+<angular-tiptap-editor
+  #editorCmp="angularTiptapEditor"
+  [extensions]="[ComponentExampleNode]"
+>
+  <ng-template tiptapBubbleMenu="componentExample" let-editor="editor">
+    <component-example-bubble-menu [editor]="editor!" />
+  </ng-template>
+</angular-tiptap-editor>
+```
+
+3. Implement the projected component however you like. The repository contains a reference implementation for the `ComponentExampleNode` under
+`projects/external-tip-tap-extensions/component-example-bubble-menu.component.ts` that reuses Tippy.js to display contextual actions.
+
+This approach keeps the core editor lean while letting consumers opt-in to any amount of custom UI.
+
 ## 🌍 Internationalization
 
 The editor supports English and French with automatic browser language detection:

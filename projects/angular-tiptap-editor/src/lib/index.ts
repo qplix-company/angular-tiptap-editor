@@ -15,6 +15,14 @@ export { TiptapSeparatorComponent } from "./tiptap-separator.component";
 // Slash commands
 export { TiptapSlashCommandsComponent } from "./tiptap-slash-commands.component";
 
+// Composition helpers
+export {
+  TiptapBubbleMenuPortalDirective,
+} from "./directives/tiptap-bubble-menu-portal.directive";
+export type {
+  TiptapBubbleMenuTemplateContext,
+} from "./directives/tiptap-bubble-menu-portal.directive";
+
 // Services
 export { TiptapI18nService } from "./services/i18n.service";
 export { EditorCommandsService } from "./services/editor-commands.service";
