@@ -1,14 +1,4 @@
-import {
-  Component,
-  input,
-  ViewChild,
-  ElementRef,
-  OnInit,
-  OnDestroy,
-  effect,
-  signal,
-  computed,
-} from "@angular/core";
+import { Component, input, ViewChild, ElementRef, OnInit, OnDestroy, effect, signal, computed } from "@angular/core";
 import tippy, { Instance as TippyInstance } from "tippy.js";
 import type { Editor } from "@tiptap/core";
 import { CellSelection } from "@tiptap/pm/tables";
@@ -34,71 +24,79 @@ export interface BubbleMenuConfig {
   template: `
     <div #menuRef class="bubble-menu">
       @if (bubbleMenuConfig().bold) {
-      <tiptap-button
-        icon="format_bold"
-        title="Gras"
-        [active]="isActive('bold')"
-        (click)="onCommand('bold', $event)"
-      ></tiptap-button>
-      } @if (bubbleMenuConfig().italic) {
-      <tiptap-button
-        icon="format_italic"
-        title="Italique"
-        [active]="isActive('italic')"
-        (click)="onCommand('italic', $event)"
-      ></tiptap-button>
-      } @if (bubbleMenuConfig().underline) {
-      <tiptap-button
-        icon="format_underlined"
-        title="Souligné"
-        [active]="isActive('underline')"
-        (click)="onCommand('underline', $event)"
-      ></tiptap-button>
-      } @if (bubbleMenuConfig().strike) {
-      <tiptap-button
-        icon="strikethrough_s"
-        title="Barré"
-        [active]="isActive('strike')"
-        (click)="onCommand('strike', $event)"
-      ></tiptap-button>
-      } @if (bubbleMenuConfig().superscript) {
-      <tiptap-button
-        icon="superscript"
-        title="Exposant"
-        [active]="isActive('superscript')"
-        (click)="onCommand('superscript', $event)"
-      ></tiptap-button>
-      } @if (bubbleMenuConfig().subscript) {
-      <tiptap-button
-        icon="subscript"
-        title="Indice"
-        [active]="isActive('subscript')"
-        (click)="onCommand('subscript', $event)"
-      ></tiptap-button>
-      } @if (bubbleMenuConfig().highlight) {
-      <tiptap-button
-        icon="highlight"
-        title="Surbrillance"
-        [active]="isActive('highlight')"
-        (click)="onCommand('highlight', $event)"
-      ></tiptap-button>
-      } @if (bubbleMenuConfig().separator && (bubbleMenuConfig().code ||
-      bubbleMenuConfig().link)) {
-      <div class="tiptap-separator"></div>
-      } @if (bubbleMenuConfig().code) {
-      <tiptap-button
-        icon="code"
-        title="Code"
-        [active]="isActive('code')"
-        (click)="onCommand('code', $event)"
-      ></tiptap-button>
-      } @if (bubbleMenuConfig().link) {
-      <tiptap-button
-        icon="link"
-        title="Lien"
-        [active]="isActive('link')"
-        (click)="onCommand('link', $event)"
-      ></tiptap-button>
+        <tiptap-button
+          icon="format_bold"
+          title="Gras"
+          [active]="isActive('bold')"
+          (click)="onCommand('bold', $event)"
+        ></tiptap-button>
+      }
+      @if (bubbleMenuConfig().italic) {
+        <tiptap-button
+          icon="format_italic"
+          title="Italique"
+          [active]="isActive('italic')"
+          (click)="onCommand('italic', $event)"
+        ></tiptap-button>
+      }
+      @if (bubbleMenuConfig().underline) {
+        <tiptap-button
+          icon="format_underlined"
+          title="Souligné"
+          [active]="isActive('underline')"
+          (click)="onCommand('underline', $event)"
+        ></tiptap-button>
+      }
+      @if (bubbleMenuConfig().strike) {
+        <tiptap-button
+          icon="strikethrough_s"
+          title="Barré"
+          [active]="isActive('strike')"
+          (click)="onCommand('strike', $event)"
+        ></tiptap-button>
+      }
+      @if (bubbleMenuConfig().superscript) {
+        <tiptap-button
+          icon="superscript"
+          title="Exposant"
+          [active]="isActive('superscript')"
+          (click)="onCommand('superscript', $event)"
+        ></tiptap-button>
+      }
+      @if (bubbleMenuConfig().subscript) {
+        <tiptap-button
+          icon="subscript"
+          title="Indice"
+          [active]="isActive('subscript')"
+          (click)="onCommand('subscript', $event)"
+        ></tiptap-button>
+      }
+      @if (bubbleMenuConfig().highlight) {
+        <tiptap-button
+          icon="highlight"
+          title="Surbrillance"
+          [active]="isActive('highlight')"
+          (click)="onCommand('highlight', $event)"
+        ></tiptap-button>
+      }
+      @if (bubbleMenuConfig().separator && (bubbleMenuConfig().code || bubbleMenuConfig().link)) {
+        <div class="tiptap-separator"></div>
+      }
+      @if (bubbleMenuConfig().code) {
+        <tiptap-button
+          icon="code"
+          title="Code"
+          [active]="isActive('code')"
+          (click)="onCommand('code', $event)"
+        ></tiptap-button>
+      }
+      @if (bubbleMenuConfig().link) {
+        <tiptap-button
+          icon="link"
+          title="Lien"
+          [active]="isActive('link')"
+          (click)="onCommand('link', $event)"
+        ></tiptap-button>
       }
     </div>
   `,
@@ -262,12 +260,10 @@ export class TiptapBubbleMenuComponent implements OnInit, OnDestroy {
 
       const { selection } = ed.state;
       const { from, to } = selection;
-      const hasTextSelection =
-        from !== to && !(selection instanceof CellSelection);
-      const isImageSelected =
-        ed.isActive("image") || ed.isActive("resizableImage");
-      const isTableCellSelected =
-        ed.isActive("tableCell") || ed.isActive("tableHeader");
+      const hasTextSelection = from !== to && !(selection instanceof CellSelection);
+      const isImageSelected = ed.isActive("image") || ed.isActive("resizableImage");
+      const isTableCellSelected = ed.isActive("tableCell") || ed.isActive("tableHeader");
+      const isComponentExampleSelected = ed.isActive("componentExample");
       const hasCellSelection = selection instanceof CellSelection;
 
       // console.log("TextBubbleMenu - updateMenu:", {
@@ -288,10 +284,7 @@ export class TiptapBubbleMenuComponent implements OnInit, OnDestroy {
       // - L'éditeur est éditable
       // Note: Le texte dans une cellule est autorisé (isTableCellSelected peut être true)
       const shouldShow =
-        hasTextSelection &&
-        !isImageSelected &&
-        !hasCellSelection &&
-        ed.isEditable;
+        hasTextSelection && !isImageSelected && !hasCellSelection && !isComponentExampleSelected && ed.isEditable;
 
       if (shouldShow) {
         this.showTippy();

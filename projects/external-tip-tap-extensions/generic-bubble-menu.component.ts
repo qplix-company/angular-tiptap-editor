@@ -158,6 +158,7 @@ export class GenericBubbleMenuComponent implements AfterViewInit, OnDestroy {
 
   private handleBlur = () => {
     setTimeout(() => {
+      if (this.menuRef?.nativeElement.contains(document.activeElement)) return;
       this.tippyInstance?.hide();
     }, 100);
   };

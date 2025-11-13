@@ -2,11 +2,7 @@ import { CommonModule } from "@angular/common";
 import { Component, OnDestroy, effect, computed, signal, input } from "@angular/core";
 import type { Editor } from "@tiptap/core";
 import { GenericBubbleMenuComponent } from "./generic-bubble-menu.component";
-import {
-  ComponentExampleNodeAttrs,
-  ComponentExampleOptions,
-  Example,
-} from "./component-example.command";
+import { ComponentExampleNodeAttrs, ComponentExampleOptions, Example } from "./component-example.command";
 
 @Component({
   selector: "component-example-bubble-menu",
@@ -23,7 +19,7 @@ import {
           <input
             type="text"
             class="cdx-input"
-            placeholder="Komponente suchen …"
+            [placeholder]="placeholder()"
             [value]="searchTerm()"
             (input)="onSearch($event)"
           />
@@ -46,18 +42,6 @@ import {
               }
             </div>
           }
-        </div>
-
-        <div class="component-example-actions">
-          <button type="button" (click)="openPreview()" [disabled]="!hasSelectedComponent()">
-            Vorschau öffnen
-          </button>
-          <button type="button" (click)="clearSelection()" [disabled]="!hasSelectedComponent()">
-            Auswahl löschen
-          </button>
-          <button type="button" class="danger" (click)="removeNode()">
-            Block entfernen
-          </button>
         </div>
       </div>
     </generic-bubble-menu>
@@ -105,10 +89,6 @@ import {
         color: #64748b;
         padding: 0.25rem 0;
       }
-      .component-example-actions {
-        display: flex;
-        gap: 0.5rem;
-      }
       .component-example-actions button {
         flex: 1;
         border: none;
@@ -131,9 +111,10 @@ import {
 })
 export class ComponentExampleBubbleMenuComponent implements OnDestroy {
   editor = input.required<Editor>();
+  componentList = input.required<Example[]>();
 
   searchTerm = signal("");
-  componentList = signal<Example[]>([]);
+  placeholder = signal("Komponente suchen …");
   currentNodeAttrs = signal<ComponentExampleNodeAttrs | null>(null);
 
   filteredComponents = computed(() => {
@@ -192,40 +173,10 @@ export class ComponentExampleBubbleMenuComponent implements OnDestroy {
       return;
     }
     ed.chain().focus().updateAttributes("componentExample", { selectedComponent: component }).run();
-    this.searchTerm.set(component.className);
+    this.searchTerm.set("");
+    this.placeholder.set(component.className);
     this.lastSelectedComponentName = component.className;
     this.refreshCurrentNodeAttrs();
-  }
-
-  clearSelection() {
-    const ed = this.editor();
-    if (!ed || !ed.isEditable) {
-      return;
-    }
-    ed.chain().focus().updateAttributes("componentExample", { selectedComponent: null }).run();
-    this.lastSelectedComponentName = null;
-    this.searchTerm.set("");
-    this.refreshCurrentNodeAttrs();
-  }
-
-  removeNode() {
-    const ed = this.editor();
-    if (!ed || !ed.isEditable) {
-      return;
-    }
-    ed.chain().focus().deleteSelection().run();
-  }
-
-  openPreview() {
-    const attrs = this.currentNodeAttrs();
-    const className = attrs?.selectedComponent?.className;
-    if (!className) {
-      return;
-    }
-    const ed = this.editor();
-    const options = ed ? this.getExtensionOptions(ed) : null;
-    const baseUrl = options?.appBaseUrl ?? "";
-    window.open(`${baseUrl}/example-server?example=${encodeURIComponent(className)}`, "_blank");
   }
 
   isActiveComponent(component: Example): boolean {
@@ -242,14 +193,12 @@ export class ComponentExampleBubbleMenuComponent implements OnDestroy {
     this.currentEditor = editor;
 
     if (!editor) {
-      this.componentList.set([]);
       this.currentNodeAttrs.set(null);
       this.searchTerm.set("");
       this.lastSelectedComponentName = null;
       return;
     }
 
-    this.componentList.set(this.getComponentList(editor));
     editor.on("selectionUpdate", this.selectionListener);
     editor.on("transaction", this.transactionListener);
     this.refreshCurrentNodeAttrs();
@@ -278,18 +227,7 @@ export class ComponentExampleBubbleMenuComponent implements OnDestroy {
 
     const className = attrs?.selectedComponent?.className ?? null;
     if (className && className !== this.lastSelectedComponentName) {
-      this.searchTerm.set(className);
       this.lastSelectedComponentName = className;
     }
-  }
-
-  private getComponentList(editor: Editor): Example[] {
-    const options = this.getExtensionOptions(editor);
-    return options?.componentList ?? [];
-  }
-
-  private getExtensionOptions(editor: Editor): ComponentExampleOptions | undefined {
-    const extension = editor.extensionManager.extensions.find((ext) => ext.name === "componentExample");
-    return extension?.options as ComponentExampleOptions | undefined;
   }
 }
