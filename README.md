@@ -351,8 +351,10 @@ import {
 </angular-tiptap-editor>
 ```
 
-3. Implement the projected component however you like. The repository contains a reference implementation for the `ComponentExampleNode` under
-`projects/external-tip-tap-extensions/component-example-bubble-menu.component.ts` that reuses Tippy.js to display contextual actions.
+3. Implement the projected component however you like. This repo now ships a reusable overlay host at
+`projects/external-tip-tap-extensions/generic-bubble-menu.component.ts` and a concrete implementation for
+`ComponentExampleNode` at `projects/external-tip-tap-extensions/component-example-bubble-menu.component.ts` that shows how to drive
+node-specific actions (like selecting a component) entirely from a projected bubble menu.
 
 This approach keeps the core editor lean while letting consumers opt-in to any amount of custom UI.
 
