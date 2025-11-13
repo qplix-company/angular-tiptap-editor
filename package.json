@@ -1,5 +1,5 @@
 {
-  "name": "angular-tiptap-editor-project",
+  "name": "@qpx/angular-tiptap-editor",
   "description": "Angular project containing the AngularTiptapEditor library and its interactive demo",
   "keywords": [
     "angular",

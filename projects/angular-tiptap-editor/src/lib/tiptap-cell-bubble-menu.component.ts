@@ -196,24 +196,24 @@ export class TiptapCellBubbleMenuComponent implements OnInit, OnDestroy {
       const isTableCell =
         ed.isActive("tableCell") || ed.isActive("tableHeader");
 
-      console.log("CellBubbleMenu - updateMenu:", {
-        hasCellSelection,
-        isSingleCellSelected: this.isSingleCellSelected,
-        hasTextSelection,
-        isTableCell,
-        selectionEmpty: selection.empty,
-        selectionType: selection.constructor.name,
-        from,
-        to,
-        isEditable: ed.isEditable,
-      });
+      // console.log("CellBubbleMenu - updateMenu:", {
+      //   hasCellSelection,
+      //   isSingleCellSelected: this.isSingleCellSelected,
+      //   hasTextSelection,
+      //   isTableCell,
+      //   selectionEmpty: selection.empty,
+      //   selectionType: selection.constructor.name,
+      //   from,
+      //   to,
+      //   isEditable: ed.isEditable,
+      // });
 
       // Le menu de cellule ne s'affiche QUE pour les sélections de cellules multiples
       // (pas pour la sélection de texte dans une cellule)
       const shouldShow = hasCellSelection && isTableCell && ed.isEditable;
 
       if (shouldShow) {
-        console.log("CellBubbleMenu - Affichage du menu de cellules");
+        // console.log("CellBubbleMenu - Affichage du menu de cellules");
         this.showTippy();
       } else {
         this.hideTippy();

@@ -1,0 +1,85 @@
+﻿<div class="tiptap-editor">
+  <!-- Toolbar -->
+  @if (showToolbar() && editor()) {
+    <tiptap-toolbar [editor]="editor()!" [config]="toolbarConfig()">
+      <div image-upload class="image-upload-container">
+        <tiptap-image-upload
+          [config]="imageUploadConfig()"
+          (imageSelected)="onImageUploaded($event)"
+          (error)="onImageUploadError($event)"
+        />
+      </div>
+    </tiptap-toolbar>
+  }
+
+  <!-- Contenu de l'éditeur -->
+  <div
+    #editorElement
+    class="tiptap-content"
+    [class.drag-over]="isDragOver()"
+    (dragover)="onDragOver($event)"
+    (drop)="onDrop($event)"
+    (click)="onEditorClick($event)"
+  ></div>
+
+  <!-- Bubble Menu pour le texte -->
+  @if (showBubbleMenu() && editor()) {
+    <tiptap-bubble-menu
+      [editor]="editor()!"
+      [config]="bubbleMenuConfig()"
+      [style.display]="editorFullyInitialized() ? 'block' : 'none'"
+    ></tiptap-bubble-menu>
+  }
+
+  <!-- Bubble Menu pour les images -->
+  @if (showImageBubbleMenu() && editor()) {
+    <tiptap-image-bubble-menu
+      [editor]="editor()!"
+      [config]="imageBubbleMenuConfig()"
+      [style.display]="editorFullyInitialized() ? 'block' : 'none'"
+    ></tiptap-image-bubble-menu>
+  }
+
+  <!-- Slash Commands -->
+  @if (enableSlashCommands() && editor()) {
+    <tiptap-slash-commands
+      [editor]="editor()!"
+      [config]="slashCommandsConfigComputed()"
+      [style.display]="editorFullyInitialized() ? 'block' : 'none'"
+      (imageUploadRequested)="onSlashCommandImageUpload($event)"
+    ></tiptap-slash-commands>
+  }
+
+  <!-- Table Menu -->
+  @if (editor()) {
+    <tiptap-table-bubble-menu
+      [editor]="editor()!"
+      [config]="tableBubbleMenuConfig()"
+      [style.display]="editorFullyInitialized() ? 'block' : 'none'"
+    ></tiptap-table-bubble-menu>
+  }
+
+  <!-- Cell Menu -->
+  @if (editor()) {
+    <tiptap-cell-bubble-menu
+      [editor]="editor()!"
+      [config]="cellBubbleMenuConfig()"
+      [style.display]="editorFullyInitialized() ? 'block' : 'none'"
+    ></tiptap-cell-bubble-menu>
+  }
+
+  <!-- Table Edit Button - Supprimé car remplacé par le menu bubble -->
+
+  <!-- Compteur de caractères -->
+  @if (showCharacterCount()) {
+    <div class="character-count">
+      {{ characterCount() }}
+      {{ i18nService.editor().character }}{{ characterCount() > 1 ? "s" : "" }}, {{ wordCount() }}
+      {{ i18nService.editor().word }}{{ wordCount() > 1 ? "s" : "" }}
+      @if (maxCharacters()) {
+        /
+        {{ maxCharacters() }}
+      }
+    </div>
+  }
+</div>

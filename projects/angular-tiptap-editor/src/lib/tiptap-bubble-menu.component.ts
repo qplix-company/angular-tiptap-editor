@@ -270,16 +270,16 @@ export class TiptapBubbleMenuComponent implements OnInit, OnDestroy {
         ed.isActive("tableCell") || ed.isActive("tableHeader");
       const hasCellSelection = selection instanceof CellSelection;
 
-      console.log("TextBubbleMenu - updateMenu:", {
-        hasTextSelection,
-        isImageSelected,
-        isTableCellSelected,
-        hasCellSelection,
-        selectionType: selection.constructor.name,
-        selectionEmpty: selection.empty,
-        from,
-        to,
-      });
+      // console.log("TextBubbleMenu - updateMenu:", {
+      //   hasTextSelection,
+      //   isImageSelected,
+      //   isTableCellSelected,
+      //   hasCellSelection,
+      //   selectionType: selection.constructor.name,
+      //   selectionEmpty: selection.empty,
+      //   from,
+      //   to,
+      // });
 
       // Ne montrer le menu texte que si :
       // - Il y a une sélection de texte (pas une sélection de cellules multiples)
