@@ -72,10 +72,12 @@ export const ComponentExampleNode = Node.create<ComponentExampleOptions>({
   },
 
   addNodeView() {
-    return ({ node, editor }) => {
+    return ({ node, editor, getPos }) => {
       const dom = document.createElement("div");
       dom.className = "component-example-block";
       dom.style.position = "relative";
+      dom.style.cursor = "pointer";
+      dom.tabIndex = -1;
 
       const placeholder = document.createElement("div");
       placeholder.className = "component-example-placeholder";
@@ -92,8 +94,26 @@ export const ComponentExampleNode = Node.create<ComponentExampleOptions>({
       dom.appendChild(placeholder);
 
       let iframe: HTMLIFrameElement | null = null;
-      const extensionOptions = editor.extensionManager.extensions.find((ext) => ext.name === "componentExample")
-        ?.options as ComponentExampleOptions | undefined;
+      const overlay = document.createElement("div");
+      overlay.style.position = "absolute";
+      overlay.style.inset = "0";
+      overlay.style.zIndex = "5";
+      overlay.style.cursor = "pointer";
+      overlay.style.borderRadius = "8px";
+      overlay.style.background = "transparent";
+      overlay.setAttribute("aria-label", "Component block auswählen");
+      dom.appendChild(overlay);
+
+      const extensionOptions = editor.extensionManager.extensions.find((ext) => ext.name === "componentExample")?.options as ComponentExampleOptions | undefined;
+
+      const selectNode = (event?: Event) => {
+        event?.preventDefault();
+        const pos = typeof getPos === "function" ? getPos() : null;
+        if (typeof pos === "number") {
+          editor.chain().setNodeSelection(pos).run();
+          editor.view.focus();
+        }
+      };
 
       const renderView = (attrs: ComponentExampleNodeAttrs) => {
         const className = attrs.selectedComponent?.className ?? null;
@@ -119,10 +139,28 @@ export const ComponentExampleNode = Node.create<ComponentExampleOptions>({
         }
       };
 
+      overlay.addEventListener("mousedown", (event) => {
+        selectNode(event);
+      });
+
+      dom.addEventListener("mousedown", (event) => {
+        if (event.target === dom) {
+          selectNode(event);
+        }
+      });
+
       renderView(node.attrs as ComponentExampleNodeAttrs);
 
       return {
         dom,
+        selectNode: () => {
+          overlay.style.pointerEvents = "none";
+          dom.classList.add("component-example-selected");
+        },
+        deselectNode: () => {
+          overlay.style.pointerEvents = "auto";
+          dom.classList.remove("component-example-selected");
+        },
         update: (updatedNode) => {
           if (updatedNode.type.name !== this.name) {
             return false;
@@ -130,6 +168,7 @@ export const ComponentExampleNode = Node.create<ComponentExampleOptions>({
           renderView(updatedNode.attrs as ComponentExampleNodeAttrs);
           return true;
         },
+        stopEvent: (event) => event.target instanceof HTMLIFrameElement,
       };
     };
   },
