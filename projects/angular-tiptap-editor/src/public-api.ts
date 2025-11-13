@@ -4,6 +4,7 @@
 
 // Main component - only public component
 export * from "./lib/tiptap-editor.component";
+export * from "./lib/generic-bubble-menu.component";
 
 // Composition helper directives
 export { TiptapBubbleMenuPortalDirective } from "./lib/directives/tiptap-bubble-menu-portal.directive";
