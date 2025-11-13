@@ -150,6 +150,7 @@ export class AngularTiptapEditorComponent implements AfterViewInit, OnDestroy {
   content = input<string>("");
   placeholder = input<string>("");
   editable = input<boolean>(true);
+  htmlOnly = input<boolean>(false);
   minHeight = input<number>(200);
   height = input<number | undefined>(undefined);
   maxHeight = input<number | undefined>(undefined);
@@ -204,6 +205,14 @@ export class AngularTiptapEditorComponent implements AfterViewInit, OnDestroy {
 
   // Computed pour les états de l'éditeur
   isEditorReady = computed(() => this.editor() !== null);
+  readonly isHtmlOnlyMode = computed(() => this.htmlOnly());
+  readonly isEditorInteractive = computed(() => !this.htmlOnly() && this.editable());
+  readonly shouldShowToolbar = computed(() => !this.htmlOnly() && this.showToolbar());
+  readonly shouldShowCharacterCount = computed(() => !this.htmlOnly() && this.showCharacterCount());
+  readonly shouldShowBubbleMenu = computed(() => !this.htmlOnly() && this.showBubbleMenu());
+  readonly shouldShowImageBubbleMenu = computed(() => !this.htmlOnly() && this.showImageBubbleMenu());
+  readonly shouldShowSlashCommands = computed(() => !this.htmlOnly() && this.enableSlashCommands());
+  readonly shouldShowTableMenus = computed(() => !this.htmlOnly());
 
   // Computed pour la configuration de la toolbar
   toolbarConfig = computed(() => (Object.keys(this.toolbar()).length === 0 ? DEFAULT_TOOLBAR_CONFIG : this.toolbar()));
@@ -336,7 +345,7 @@ export class AngularTiptapEditorComponent implements AfterViewInit, OnDestroy {
     // Effect pour surveiller les changements d'édition
     effect(() => {
       const currentEditor = this.editor();
-      const isEditable = this.editable();
+      const isEditable = this.isEditorInteractive();
 
       if (currentEditor) {
         this.editorCommandsService.setEditable(currentEditor, isEditable);
@@ -421,7 +430,7 @@ export class AngularTiptapEditorComponent implements AfterViewInit, OnDestroy {
       );
     }
 
-    if (this.showCharacterCount()) {
+    if (this.shouldShowCharacterCount()) {
       extensions.push(
         CharacterCount.configure({
           limit: this.maxCharacters(),
@@ -433,7 +442,7 @@ export class AngularTiptapEditorComponent implements AfterViewInit, OnDestroy {
       element: this.editorElement().nativeElement,
       extensions,
       content: this.content(),
-      editable: this.editable(),
+      editable: this.isEditorInteractive(),
       onUpdate: ({ editor, transaction }) => {
         const html = editor.getHTML();
         this.contentChange.emit(html);
@@ -475,7 +484,7 @@ export class AngularTiptapEditorComponent implements AfterViewInit, OnDestroy {
   }
 
   private updateCharacterCount(editor: Editor) {
-    if (this.showCharacterCount() && editor.storage["characterCount"]) {
+    if (this.shouldShowCharacterCount() && editor.storage["characterCount"]) {
       const storage = editor.storage["characterCount"];
       this._characterCount.set(storage.characters());
       this._wordCount.set(storage.words());
@@ -502,6 +511,9 @@ export class AngularTiptapEditorComponent implements AfterViewInit, OnDestroy {
 
   // Gestion de l'upload d'image depuis les slash commands
   async onSlashCommandImageUpload(file: File) {
+    if (this.isHtmlOnlyMode()) {
+      return;
+    }
     const currentEditor = this.editor();
     if (currentEditor) {
       try {
@@ -513,12 +525,18 @@ export class AngularTiptapEditorComponent implements AfterViewInit, OnDestroy {
   }
 
   onDragOver(event: DragEvent) {
+    if (this.isHtmlOnlyMode()) {
+      return;
+    }
     event.preventDefault();
     event.stopPropagation();
     this._isDragOver.set(true);
   }
 
   onDrop(event: DragEvent) {
+    if (this.isHtmlOnlyMode()) {
+      return;
+    }
     event.preventDefault();
     event.stopPropagation();
     this._isDragOver.set(false);
@@ -622,13 +640,13 @@ export class AngularTiptapEditorComponent implements AfterViewInit, OnDestroy {
   setDisabledState(isDisabled: boolean): void {
     const currentEditor = this.editor();
     if (currentEditor) {
-      this.editorCommandsService.setEditable(currentEditor, !isDisabled);
+      this.editorCommandsService.setEditable(currentEditor, !isDisabled && !this.isHtmlOnlyMode());
     }
   }
 
   onEditorClick(event: MouseEvent) {
     const editor = this.editor();
-    if (!editor || !this.editable() || !editor.isEditable) return;
+    if (!editor || !this.isEditorInteractive() || !editor.isEditable) return;
 
     // Vérifier si on clique sur l'élément conteneur et non sur le contenu
     const target = event.target as HTMLElement;

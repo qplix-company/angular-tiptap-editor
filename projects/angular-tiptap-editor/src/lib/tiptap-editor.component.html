@@ -1,6 +1,6 @@
 ﻿<div class="tiptap-editor">
   <!-- Toolbar -->
-  @if (showToolbar() && editor()) {
+  @if (shouldShowToolbar() && editor()) {
     <tiptap-toolbar [editor]="editor()!" [config]="toolbarConfig()">
       <div image-upload class="image-upload-container">
         <tiptap-image-upload
@@ -23,7 +23,7 @@
   ></div>
 
   <!-- Bubble Menu pour le texte -->
-  @if (showBubbleMenu() && editor()) {
+  @if (shouldShowBubbleMenu() && editor()) {
     <tiptap-bubble-menu
       [editor]="editor()!"
       [config]="bubbleMenuConfig()"
@@ -32,7 +32,7 @@
   }
 
   <!-- Bubble Menu pour les images -->
-  @if (showImageBubbleMenu() && editor()) {
+  @if (shouldShowImageBubbleMenu() && editor()) {
     <tiptap-image-bubble-menu
       [editor]="editor()!"
       [config]="imageBubbleMenuConfig()"
@@ -41,7 +41,7 @@
   }
 
   <!-- Slash Commands -->
-  @if (enableSlashCommands() && editor()) {
+  @if (shouldShowSlashCommands() && editor()) {
     <tiptap-slash-commands
       [editor]="editor()!"
       [config]="slashCommandsConfigComputed()"
@@ -51,7 +51,7 @@
   }
 
   <!-- Table Menu -->
-  @if (editor()) {
+  @if (shouldShowTableMenus() && editor()) {
     <tiptap-table-bubble-menu
       [editor]="editor()!"
       [config]="tableBubbleMenuConfig()"
@@ -60,7 +60,7 @@
   }
 
   <!-- Cell Menu -->
-  @if (editor()) {
+  @if (shouldShowTableMenus() && editor()) {
     <tiptap-cell-bubble-menu
       [editor]="editor()!"
       [config]="cellBubbleMenuConfig()"
@@ -81,7 +81,7 @@
   <!-- Table Edit Button - Supprimé car remplacé par le menu bubble -->
 
   <!-- Compteur de caractères -->
-  @if (showCharacterCount()) {
+  @if (shouldShowCharacterCount()) {
     <div class="character-count">
       {{ characterCount() }}
       {{ i18nService.editor().character }}{{ characterCount() > 1 ? "s" : "" }}, {{ wordCount() }}

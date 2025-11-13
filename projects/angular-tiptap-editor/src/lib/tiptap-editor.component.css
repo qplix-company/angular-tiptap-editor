@@ -140,12 +140,13 @@
 
 /* Mode lecture seule */
 :host ::ng-deep .ProseMirror[contenteditable="false"] {
-  pointer-events: none;
+  /* Autoriser les interactions (ex: liens) même en lecture seule */
+  pointer-events: auto;
 }
 
 :host ::ng-deep .ProseMirror[contenteditable="false"] img {
   cursor: default;
-  pointer-events: none;
+  pointer-events: auto;
 }
 
 :host ::ng-deep .ProseMirror[contenteditable="false"] img:hover {
