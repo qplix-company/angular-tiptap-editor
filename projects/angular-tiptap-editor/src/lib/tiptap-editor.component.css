@@ -13,7 +13,7 @@
   border: 2px solid var(--tiptap-color-border, #e2e8f0);
 }
 
-.tiptap-editor:focus-within {
+:host.editable .tiptap-editor:focus-within {
   border-color: var(--tiptap-color-accent, #3182ce);
 }
 
